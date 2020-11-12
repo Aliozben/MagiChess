@@ -41,11 +41,14 @@
      <Compile Include="Assets\Scripts\BoardHighlights.cs" />
      <Compile Include="Assets\Scripts\BoardManager.cs" />
      <Compile Include="Assets\Scripts\ChessPieces.cs" />
+     <Compile Include="Assets\Scripts\Client.cs" />
+     <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\King.cs" />
      <Compile Include="Assets\Scripts\Knight.cs" />
      <Compile Include="Assets\Scripts\Pawn.cs" />
      <Compile Include="Assets\Scripts\Queen.cs" />
      <Compile Include="Assets\Scripts\Rook.cs" />
+     <Compile Include="Assets\Scripts\Server.cs" />
      <None Include="Assets\Tiny Chess Stone Chess Piece\Readme Eng.txt" />
      <None Include="Assets\QuickOutline\Resources\Shaders\OutlineMask.shader" />
      <None Include="Assets\QuickOutline\Readme.txt" />

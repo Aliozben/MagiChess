@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Rook : ChessPieces {
+    bool everMoved;
     public override bool[,] possibleMove() {
         bool[,] r = new bool[8, 8];
         ChessPieces c;

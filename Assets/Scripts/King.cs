@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class King : ChessPieces {
+    public bool everMoved;
     public override bool[,] possibleMove() {
-        bool[,] r = new bool[8, 8];
+        bool[,] r = new bool[8, 8];        
         ChessPieces c;
         int i, j;
         //Top side

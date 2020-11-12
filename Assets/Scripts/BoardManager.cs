@@ -16,7 +16,11 @@ public class BoardManager : MonoBehaviour {
     private List<GameObject> activeChessmen;
     public int[] passantMove { get; set; }
     public bool isWhiteTurn = true;
+    public bool playerIsWhite;
+    private Client client;
     private void Start() {
+        client = FindObjectOfType<Client>();
+        playerIsWhite = client.isHost;
         Instance = this;
         spawnAllChessmen();
     }
@@ -26,37 +30,35 @@ public class BoardManager : MonoBehaviour {
         if (Input.GetMouseButtonDown(0)) {
             if (selectionX >= 0 && selectionY >= 0) {
                 if (selectedPiece == null) {
+                    Debug.Log("selec1");
+                    if (chessMen[selectionX, selectionY] == null) {
+                        return;
+                    }
+                    if (chessMen[selectionX, selectionY].isItWhite != isWhiteTurn || playerIsWhite != isWhiteTurn) {
+                        return;
+                    }
                     selectChessPiece(selectionX, selectionY);
                 } else {
-                    moveChessPiece(selectionX, selectionY);
+                    sendMove(selectedPiece.currentX, selectedPiece.currentY, selectionX, selectionY);
                 }
             }
         }
     }
     private void selectChessPiece(int x, int y) {
-        if (chessMen[x, y] == null) {
-            return;
-        }
-        if (chessMen[x, y].isItWhite != isWhiteTurn) {
-            return;
-        }
         allowedMoves = chessMen[x, y].possibleMove();
         selectedPiece = chessMen[x, y];
         selectedPiece.GetComponent<Outline>().enabled = true;
         BoardHighlights.Instance.highlightAllowedMoves(allowedMoves);
     }
 
-    private void enPassantMove(int x, int y, ChessPieces c){
+    private void enPassantMove(int x, int y, ChessPieces c) {
         if (x == passantMove[0] && y == passantMove[1]) {
-
             if (isWhiteTurn)
                 c = chessMen[x, y - 1];
             else
                 c = chessMen[x, y - 1];
-
             activeChessmen.Remove(c.gameObject);
             Destroy(c.gameObject);
-
         }
         for (int i = 0; i < passantMove.Length; i++) {
             passantMove[i] = -1;
@@ -82,7 +84,23 @@ public class BoardManager : MonoBehaviour {
             }
         }
     }
-    private void moveChessPiece(int x, int y) {
+
+    private void castlingMove(int x, int y, ChessPieces c) {
+        if (selectedPiece.GetType() == typeof(King)) {
+
+        }
+    }
+    private void sendMove(int selectionX, int selectionY, int x, int y) {
+        string msg = "CMOV|";
+        msg += selectedPiece.currentX.ToString() + "|";
+        msg += selectedPiece.currentY.ToString() + "|";
+        msg += x.ToString() + "|";
+        msg += y.ToString();
+        client.send(msg);
+    }
+    public void moveChessPiece(int selectionX, int selectionY, int x, int y) {
+        selectChessPiece(selectionX, selectionY);
+        Debug.Log(selectedPiece.GetType());
         if (allowedMoves[x, y]) {
             ChessPieces c = chessMen[x, y];
             if (c != null && c.isItWhite != isWhiteTurn) {
@@ -92,7 +110,7 @@ public class BoardManager : MonoBehaviour {
                 activeChessmen.Remove(c.gameObject);
                 Destroy(c.gameObject);
             }
-            enPassantMove(x,y,c);
+            enPassantMove(x, y, c);
             chessMen[selectedPiece.currentX, selectedPiece.currentY] = null;
             selectedPiece.transform.position = getTileCenter(x, y);
             selectedPiece.setPosition(x, y);
@@ -134,9 +152,9 @@ public class BoardManager : MonoBehaviour {
 
         //WHITE TEAM
         //King
-        spawnChessman(0, 3, 0);
+        spawnChessman(0, 4, 0);
         //Queen
-        spawnChessman(1, 4, 0);
+        spawnChessman(1, 3, 0);
         //Rook
         spawnChessman(2, 0, 0);
         spawnChessman(2, 7, 0);
@@ -149,9 +167,9 @@ public class BoardManager : MonoBehaviour {
 
         //BLACK TEAM
         //King
-        spawnChessman(6, 4, 7);
+        spawnChessman(6, 3, 7);
         //Queen
-        spawnChessman(7, 3, 7);
+        spawnChessman(7, 4, 7);
         //Rook
         spawnChessman(8, 0, 7);
         spawnChessman(8, 7, 7);
