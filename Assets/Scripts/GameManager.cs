@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Net;
+//using System.Net.Sockets;
 
 public class GameManager : MonoBehaviour {
     public static GameManager Instance { get; set; }
@@ -12,6 +14,7 @@ public class GameManager : MonoBehaviour {
     public GameObject serverPrefab;
     public GameObject clientPrefab;
     public InputField nameInput;
+    public Text IPText;
     private void Start() {
         Instance = this;
         mainMenu.SetActive(true);
@@ -22,6 +25,8 @@ public class GameManager : MonoBehaviour {
         connectMenu.SetActive(true);
     }
     public void hostButton() {
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+        IPText.text = "Your IP Adress is: " + host.AddressList[1].ToString();
         try {
             Server s = Instantiate(serverPrefab).GetComponent<Server>();
             s.init();

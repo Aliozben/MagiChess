@@ -13,7 +13,6 @@ public class Pawn : ChessPieces {
         if (isItWhite) {
             //Diagonal Right
             if (currentX != 7 && currentY != 7) {
-
                 if (passant[0] == currentX + 1 && passant[1] == currentY + 1)
                     r[currentX + 1, currentY + 1] = true;
                 c = BoardManager.Instance.chessMen[currentX + 1, currentY + 1];
@@ -46,7 +45,7 @@ public class Pawn : ChessPieces {
                     r[currentX, currentY + 2] = true;
             }
         }
-        // Blue move
+        // Bkack move
         else {
             //Diagonal Right
             if (currentX != 7 && currentY != 0) {
@@ -68,7 +67,6 @@ public class Pawn : ChessPieces {
             }
             //Midlle
             if (currentY != 0) {
-
                 c = BoardManager.Instance.chessMen[currentX, currentY - 1];
                 if (c == null)
                     r[currentX, currentY - 1] = true;

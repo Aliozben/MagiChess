@@ -63,32 +63,24 @@ public class BoardManager : MonoBehaviour {
         for (int i = 0; i < passantMove.Length; i++) {
             passantMove[i] = -1;
         }
-        if (selectedPiece.GetType() == typeof(Pawn)) {
-            if (y == 7) {
-                activeChessmen.Remove(selectedPiece.gameObject);
-                Destroy(selectedPiece.gameObject);
-                spawnChessman(1, x, y);
-                selectedPiece = chessMen[x, y];
-            } else if (y == 0) {
-                activeChessmen.Remove(selectedPiece.gameObject);
-                Destroy(selectedPiece.gameObject);
-                spawnChessman(7, x, y);
-                selectedPiece = chessMen[x, y];
-            }
-            if (selectedPiece.currentY == 1 && y == 3) {
-                passantMove[0] = x;
-                passantMove[1] = y - 1;
-            } else if (selectedPiece.currentY == 6 && y == 4) {
-                passantMove[0] = x;
-                passantMove[1] = y + 1;
-            }
-        }
     }
 
     private void castlingMove(int x, int y, ChessPieces c) {
-        if (selectedPiece.GetType() == typeof(King)) {
-
+        if (y == 0) {
+            if (x == 0)
+                moveChessPiece(x, y, 1, 0);
+            else if (x == 7)
+                moveChessPiece(x, y, 6, 0);
+            selectedPiece = chessMen[4, 0];
+        } else if (y == 7) {
+            if (x == 0)
+                moveChessPiece(x, y, 1, 7);
+            else if (x == 7)
+                moveChessPiece(x, y, 6, 7);
+            selectedPiece = chessMen[4, 7];
         }
+        // For fixing the issue that playing in a row
+        isWhiteTurn = !isWhiteTurn;
     }
     private void sendMove(int selectionX, int selectionY, int x, int y) {
         string msg = "CMOV|";
@@ -111,9 +103,37 @@ public class BoardManager : MonoBehaviour {
                 Destroy(c.gameObject);
             }
             enPassantMove(x, y, c);
+
+            if (selectedPiece.GetType() == typeof(Pawn)) {
+                if (y == 7) {
+                    activeChessmen.Remove(selectedPiece.gameObject);
+                    Destroy(selectedPiece.gameObject);
+                    spawnChessman(1, x, y);
+                    selectedPiece = chessMen[x, y];
+                } else if (y == 0) {
+                    activeChessmen.Remove(selectedPiece.gameObject);
+                    Destroy(selectedPiece.gameObject);
+                    spawnChessman(7, x, y);
+                    selectedPiece = chessMen[x, y];
+                }
+                if (selectedPiece.currentY == 1 && y == 3) {
+                    passantMove[0] = x;
+                    passantMove[1] = y - 1;
+                } else if (selectedPiece.currentY == 6 && y == 4) {
+                    passantMove[0] = x;
+                    passantMove[1] = y + 1;
+                }
+            }
+            if (selectedPiece.GetType() == typeof(King) && c != null)
+                castlingMove(x, y, c);
             chessMen[selectedPiece.currentX, selectedPiece.currentY] = null;
             selectedPiece.transform.position = getTileCenter(x, y);
             selectedPiece.setPosition(x, y);
+
+            if (selectedPiece.GetType() == typeof(King))
+                selectedPiece.GetComponent<King>().everMoved = true;
+            else if (selectedPiece.GetType() == typeof(Rook))
+                selectedPiece.GetComponent<Rook>().everMoved = true;
             chessMen[x, y] = selectedPiece;
             isWhiteTurn = !isWhiteTurn;
         }
@@ -167,9 +187,9 @@ public class BoardManager : MonoBehaviour {
 
         //BLACK TEAM
         //King
-        spawnChessman(6, 3, 7);
+        spawnChessman(6, 4, 7);
         //Queen
-        spawnChessman(7, 4, 7);
+        spawnChessman(7, 3, 7);
         //Rook
         spawnChessman(8, 0, 7);
         spawnChessman(8, 7, 7);
