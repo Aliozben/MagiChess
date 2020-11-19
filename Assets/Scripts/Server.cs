@@ -81,6 +81,9 @@ public class Server : MonoBehaviour {
             case "CMOV":
                 broadcast("SMOV|" + aData[1] + "|" + aData[2] + "|" + aData[3] + "|" + aData[4], clients);
                 break;
+            case "CUPGR":
+                broadcast("SUPGR|" + aData[1] + "|" + aData[2] + "|" + aData[3], clients);
+                break;
         }
     }
     private void startListening() {

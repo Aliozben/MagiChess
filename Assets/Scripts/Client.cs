@@ -66,6 +66,9 @@ public class Client : MonoBehaviour {
             case "SMOV":
                 BoardManager.Instance.moveChessPiece(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]), int.Parse(aData[4]));
                 break;
+            case "SUPGR":
+                BoardManager.Instance.pawnUpgrade(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]));
+                break;
         }
     }
     private void userConnected(string name, bool host) {

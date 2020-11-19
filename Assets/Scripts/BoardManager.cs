@@ -14,13 +14,23 @@ public class BoardManager : MonoBehaviour {
     private int selectionY = -1;
     public List<GameObject> chessmanPrefabs;
     private List<GameObject> activeChessmen;
+    private Client client;
     public int[] passantMove { get; set; }
     public bool isWhiteTurn = true;
     public bool playerIsWhite;
-    private Client client;
+    public GameObject cameraAngle;
+    [SerializeField] GameObject goLight;
+    [SerializeField] GameObject upgradePanel;
+    Command com;
     private void Start() {
         client = FindObjectOfType<Client>();
+        com = FindObjectOfType<Command>();
         playerIsWhite = client.isHost;
+        if (!playerIsWhite) {
+            cameraAngle.transform.position = new Vector3(4, 6, 10);
+            cameraAngle.transform.Rotate(new Vector3(105, 180, 0));
+            goLight.transform.Rotate(new Vector3(80, 0, 0));
+        }
         Instance = this;
         spawnAllChessmen();
     }
@@ -39,7 +49,7 @@ public class BoardManager : MonoBehaviour {
                     }
                     selectChessPiece(selectionX, selectionY);
                 } else {
-                    sendMove(selectedPiece.currentX, selectedPiece.currentY, selectionX, selectionY);
+                    com.sendMove(selectedPiece.currentX, selectedPiece.currentY, selectionX, selectionY);
                 }
             }
         }
@@ -49,6 +59,16 @@ public class BoardManager : MonoBehaviour {
         selectedPiece = chessMen[x, y];
         selectedPiece.GetComponent<Outline>().enabled = true;
         BoardHighlights.Instance.highlightAllowedMoves(allowedMoves);
+    }
+    public void pawnUpgrade(int currentX, int currentY, int upgrade) {
+        //Black Upgrade
+        if (currentY == 0)
+            upgrade += 6;
+        selectedPiece = chessMen[currentX, currentY];
+        activeChessmen.Remove(selectedPiece.gameObject);
+        Destroy(selectedPiece.gameObject);
+        spawnChessman(upgrade, currentX, currentY);
+        isWhiteTurn = !isWhiteTurn;
     }
 
     private void enPassantMove(int x, int y, ChessPieces c) {
@@ -82,14 +102,6 @@ public class BoardManager : MonoBehaviour {
         // For fixing the issue that playing in a row
         isWhiteTurn = !isWhiteTurn;
     }
-    private void sendMove(int selectionX, int selectionY, int x, int y) {
-        string msg = "CMOV|";
-        msg += selectedPiece.currentX.ToString() + "|";
-        msg += selectedPiece.currentY.ToString() + "|";
-        msg += x.ToString() + "|";
-        msg += y.ToString();
-        client.send(msg);
-    }
     public void moveChessPiece(int selectionX, int selectionY, int x, int y) {
         selectChessPiece(selectionX, selectionY);
         Debug.Log(selectedPiece.GetType());
@@ -105,17 +117,12 @@ public class BoardManager : MonoBehaviour {
             enPassantMove(x, y, c);
 
             if (selectedPiece.GetType() == typeof(Pawn)) {
-                if (y == 7) {
-                    activeChessmen.Remove(selectedPiece.gameObject);
-                    Destroy(selectedPiece.gameObject);
-                    spawnChessman(1, x, y);
-                    selectedPiece = chessMen[x, y];
-                } else if (y == 0) {
-                    activeChessmen.Remove(selectedPiece.gameObject);
-                    Destroy(selectedPiece.gameObject);
-                    spawnChessman(7, x, y);
-                    selectedPiece = chessMen[x, y];
+                if (y == 7 || y == 0) {
+                    if (isWhiteTurn == playerIsWhite)
+                        upgradePanel.SetActive(true);
+                    isWhiteTurn = !isWhiteTurn;
                 }
+
                 if (selectedPiece.currentY == 1 && y == 3) {
                     passantMove[0] = x;
                     passantMove[1] = y - 1;
