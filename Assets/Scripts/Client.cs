@@ -60,14 +60,17 @@ public class Client : MonoBehaviour {
                 }
                 send("CWHO|" + clientName + "|" + ((isHost ? 1 : 0).ToString()));
                 break;
-            case "SCNN":
+            case "SCNN": //Connect
                 userConnected(aData[1], false);
                 break;
-            case "SMOV":
+            case "SMOV": //Move Piece
                 BoardManager.Instance.moveChessPiece(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]), int.Parse(aData[4]));
                 break;
-            case "SUPGR":
+            case "SUPGR": //Upgrade
                 BoardManager.Instance.pawnUpgrade(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]));
+                break;
+            case "SSUP": //Spell Upgrade
+                BoardManager.Instance.actionSpell(aData[1], int.Parse(aData[2]), int.Parse(aData[3]));
                 break;
         }
     }

@@ -25,7 +25,7 @@ public class BoardHighlights : MonoBehaviour {
                 if (moves[i, j]) {
                     GameObject go = getHighlightObject();
                     go.SetActive(true);
-                    go.transform.position = new Vector3(i + .5f, 0, j + .5f);
+                    go.transform.position = new Vector3(i + .5f, .0451f, j + .5f);
                 }
             }
         }

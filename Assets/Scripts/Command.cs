@@ -9,7 +9,6 @@ public class Command : MonoBehaviour {
         BM = BoardManager.Instance;
         client = FindObjectOfType<Client>();
     }
-
     public void commandUpgrade(int upgrade) {
         string msg = "CUPGR|";
         for (int i = 0; i <= 7; i++) {
@@ -32,6 +31,13 @@ public class Command : MonoBehaviour {
         msg += currentY.ToString() + "|";
         msg += x.ToString() + "|";
         msg += y.ToString();
+        client.send(msg);
+    }
+    public void spellUpgrade(string spellName, int x, int y) {
+        string msg = "CSUP|";
+        msg += spellName + "|";
+        msg += x.ToString() + "|";
+        msg += y.ToString() + "|";
         client.send(msg);
     }
 }

@@ -84,6 +84,9 @@ public class Server : MonoBehaviour {
             case "CUPGR":
                 broadcast("SUPGR|" + aData[1] + "|" + aData[2] + "|" + aData[3], clients);
                 break;
+            case "CSUP":
+                broadcast("SSUP|" + aData[1] + "|" + aData[2] + "|" + aData[3], clients);
+                break;
         }
     }
     private void startListening() {

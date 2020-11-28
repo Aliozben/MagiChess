@@ -22,9 +22,15 @@ public class BoardManager : MonoBehaviour {
     [SerializeField] GameObject goLight;
     [SerializeField] GameObject upgradePanel;
     Command com;
+    SpellCards spells;
+    private bool isSpellMove;
+    private string spellName;
+    public List<GameObject> spelledPrefabs;
     private void Start() {
         client = FindObjectOfType<Client>();
         com = FindObjectOfType<Command>();
+        spells = FindObjectOfType<SpellCards>();
+
         playerIsWhite = client.isHost;
         if (!playerIsWhite) {
             cameraAngle.transform.position = new Vector3(4, 6, 10);
@@ -34,25 +40,115 @@ public class BoardManager : MonoBehaviour {
         Instance = this;
         spawnAllChessmen();
     }
-    private void Update() {
-        DrawChessboard();
-        updateSelection();
-        if (Input.GetMouseButtonDown(0)) {
-            if (selectionX >= 0 && selectionY >= 0) {
-                if (selectedPiece == null) {
-                    Debug.Log("selec1");
-                    if (chessMen[selectionX, selectionY] == null) {
-                        return;
+    public void spellHighlight(string spellName) {
+        BoardHighlights.Instance.hideHighlights();
+        isSpellMove = true;
+        this.spellName = spellName;
+        switch (spellName) {
+            case "Upgrade":
+                allowedMoves = spells.possibleUpgrade();
+                break;
+            case "Stun":
+                // Stun func
+                break;
+        }
+        BoardHighlights.Instance.highlightAllowedMoves(allowedMoves);
+    }
+    List<spelledPiece> spelledPieces = new List<spelledPiece>();
+    public void actionSpell(string spellName, int x, int y) {
+        selectedPiece = chessMen[x, y];
+        string type = selectedPiece.GetType().ToString();
+        spelledPiece sp = new spelledPiece();
+        switch (type) {
+            case "Queen": sp.pieceType = 1; break;
+            case "Rook": sp.pieceType = 2; break;
+            case "Bishop": sp.pieceType = 3; break;
+            case "Knight": sp.pieceType = 4; break;
+            case "Pawn": sp.pieceType = 5; break;
+        }
+        if (!playerIsWhite)
+            sp.pieceType += 6;
+        sp.spellName = spellName;
+        //sp.isWhiteSpell = 
+        spelledPieces.Add(sp);
+        activeChessmen.Remove(selectedPiece.gameObject);
+        Destroy(selectedPiece.gameObject);
+
+        switch (spellName) {
+            case "Upgrade":
+
+                if (isWhiteTurn)
+                    spawnSpellMan(0, x, y);
+                else
+                    spawnSpellMan(0, x, y);
+                break;
+            case "Stun":
+                // Stun func
+                break;
+        }
+        BoardHighlights.Instance.hideHighlights();
+        swapTurn();
+        isSpellMove = false;
+    }
+    [SerializeField] bool resetSpells;
+    private void resetSpell() {
+
+        if (spelledPieces.Count > 0 && resetSpells) {
+            foreach (spelledPiece item in spelledPieces) {
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        if (chessMen[i, j] != null) {
+                            if (chessMen[i, j].GetType() == typeof(Master)) {
+                                activeChessmen.Remove(chessMen[i, j].gameObject);
+                                Destroy(chessMen[i, j].gameObject);
+                                spawnChessman(item.pieceType, i, j);
+                            }
+                        }
                     }
-                    if (chessMen[selectionX, selectionY].isItWhite != isWhiteTurn || playerIsWhite != isWhiteTurn) {
-                        return;
-                    }
-                    selectChessPiece(selectionX, selectionY);
-                } else {
-                    com.sendMove(selectedPiece.currentX, selectedPiece.currentY, selectionX, selectionY);
                 }
             }
         }
+
+    }
+    private void Update() {
+        if (isWhiteTurn != playerIsWhite)
+            resetSpells = true;
+        else if (Input.GetMouseButtonDown(0))
+            resetSpells = false;
+        if (resetSpells && isWhiteTurn == playerIsWhite) {
+            resetSpell();
+            resetSpells = false;
+        }
+
+        updateSelection();
+        if (isSpellMove) {
+            if (Input.GetMouseButtonDown(0)) {
+                if (selectionX >= 0 && selectionY >= 0) {
+                    if (allowedMoves[selectionX, selectionY]) {
+                        com.spellUpgrade(spellName, selectionX, selectionY);
+                    } else
+                        BoardHighlights.Instance.hideHighlights();
+                }
+            }
+        } else {
+            if (Input.GetMouseButtonDown(0) && !upgradePanel.activeSelf) {
+                if (selectionX >= 0 && selectionY >= 0) {
+                    if (selectedPiece == null) {
+                        if (chessMen[selectionX, selectionY] == null) {
+                            return;
+                        }
+                        if (chessMen[selectionX, selectionY].isItWhite != isWhiteTurn || playerIsWhite != isWhiteTurn) {
+                            return;
+                        }
+                        selectChessPiece(selectionX, selectionY);
+                    } else {
+                        com.sendMove(selectedPiece.currentX, selectedPiece.currentY, selectionX, selectionY);
+                        resetSpells = false;
+                    }
+                }
+            }
+        }
+
     }
     private void selectChessPiece(int x, int y) {
         allowedMoves = chessMen[x, y].possibleMove();
@@ -68,15 +164,14 @@ public class BoardManager : MonoBehaviour {
         activeChessmen.Remove(selectedPiece.gameObject);
         Destroy(selectedPiece.gameObject);
         spawnChessman(upgrade, currentX, currentY);
-        isWhiteTurn = !isWhiteTurn;
+        swapTurn();
     }
-
     private void enPassantMove(int x, int y, ChessPieces c) {
         if (x == passantMove[0] && y == passantMove[1]) {
             if (isWhiteTurn)
                 c = chessMen[x, y - 1];
             else
-                c = chessMen[x, y - 1];
+                c = chessMen[x, y + 1];
             activeChessmen.Remove(c.gameObject);
             Destroy(c.gameObject);
         }
@@ -84,7 +179,6 @@ public class BoardManager : MonoBehaviour {
             passantMove[i] = -1;
         }
     }
-
     private void castlingMove(int x, int y, ChessPieces c) {
         if (y == 0) {
             if (x == 0)
@@ -100,8 +194,10 @@ public class BoardManager : MonoBehaviour {
             selectedPiece = chessMen[4, 7];
         }
         // For fixing the issue that playing in a row
-        isWhiteTurn = !isWhiteTurn;
+        // isWhiteTurn = !isWhiteTurn;
+        // turnCount--;
     }
+    private bool isMoveRepeating;
     public void moveChessPiece(int selectionX, int selectionY, int x, int y) {
         selectChessPiece(selectionX, selectionY);
         Debug.Log(selectedPiece.GetType());
@@ -120,7 +216,7 @@ public class BoardManager : MonoBehaviour {
                 if (y == 7 || y == 0) {
                     if (isWhiteTurn == playerIsWhite)
                         upgradePanel.SetActive(true);
-                    isWhiteTurn = !isWhiteTurn;
+                    isMoveRepeating = true;
                 }
 
                 if (selectedPiece.currentY == 1 && y == 3) {
@@ -131,8 +227,10 @@ public class BoardManager : MonoBehaviour {
                     passantMove[1] = y + 1;
                 }
             }
-            if (selectedPiece.GetType() == typeof(King) && c != null)
+            if (selectedPiece.GetType() == typeof(King) && c != null) {
                 castlingMove(x, y, c);
+                isMoveRepeating = true;
+            }
             chessMen[selectedPiece.currentX, selectedPiece.currentY] = null;
             selectedPiece.transform.position = getTileCenter(x, y);
             selectedPiece.setPosition(x, y);
@@ -142,13 +240,14 @@ public class BoardManager : MonoBehaviour {
             else if (selectedPiece.GetType() == typeof(Rook))
                 selectedPiece.GetComponent<Rook>().everMoved = true;
             chessMen[x, y] = selectedPiece;
-            isWhiteTurn = !isWhiteTurn;
+            if (!isMoveRepeating)
+                swapTurn();
         }
         selectedPiece.GetComponent<Outline>().enabled = false;
         BoardHighlights.Instance.hideHighlights();
         selectedPiece = null;
+        isMoveRepeating = false;
     }
-
     private void gameOver() {
         if (isWhiteTurn)
             Debug.Log("White won");
@@ -157,7 +256,6 @@ public class BoardManager : MonoBehaviour {
 
         restartGame();
     }
-
     private void restartGame() {
         foreach (GameObject go in activeChessmen)
             Destroy(go);
@@ -165,7 +263,6 @@ public class BoardManager : MonoBehaviour {
         BoardHighlights.Instance.hideHighlights();
         spawnAllChessmen();
     }
-
     private Vector3 getTileCenter(int x, int y) {
         Vector3 origin = Vector3.zero;
         origin.x += (TILE_SIZE * x) + TILE_OFFSET;
@@ -231,6 +328,13 @@ public class BoardManager : MonoBehaviour {
         chessMen[x, y].setPosition(x, y);
         activeChessmen.Add(go);
     }
+    private void spawnSpellMan(int index, int x, int y) {
+        GameObject go = Instantiate(spelledPrefabs[index], getTileCenter(x, y), Quaternion.identity) as GameObject;
+        go.transform.SetParent(transform);
+        chessMen[x, y] = go.GetComponent<ChessPieces>();
+        chessMen[x, y].setPosition(x, y);
+        activeChessmen.Add(go);
+    }
     private void DrawChessboard() {
         Vector3 widthLine = Vector3.right * 8;
         Vector3 heigthLine = Vector3.forward * 8;
@@ -249,4 +353,16 @@ public class BoardManager : MonoBehaviour {
 
         }
     }
+    [SerializeField] private int turnCount = 0;
+    private void swapTurn() {
+        turnCount++;
+        isWhiteTurn = !isWhiteTurn;
+    }
+
+}
+struct spelledPiece {
+    public string spellName;
+    public int pieceType;
+    public bool isWhiteSpell;
+    public int turnCount;
 }
