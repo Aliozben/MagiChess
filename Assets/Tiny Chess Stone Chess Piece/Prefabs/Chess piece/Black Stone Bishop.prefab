@@ -289,6 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 286ea8d44e03ae040a0e3622ae110559, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 0
   isItWhite: 0
 --- !u!114 &921339176115006556
 MonoBehaviour:

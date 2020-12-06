@@ -19,11 +19,12 @@ public class BoardManager : MonoBehaviour {
     public bool isWhiteTurn = true;
     public bool playerIsWhite;
     public GameObject cameraAngle;
-    [SerializeField] GameObject goLight;
-    [SerializeField] GameObject upgradePanel;
+    public GameObject goLight;
+    public GameObject upgradePanel;
+    [SerializeField] private int turnCount = 0;
     Command com;
     SpellCards spells;
-    private bool isSpellMove;
+    [SerializeField] private bool isSpellMove;
     private string spellName;
     public List<GameObject> spelledPrefabs;
     private void Start() {
@@ -66,60 +67,54 @@ public class BoardManager : MonoBehaviour {
             case "Knight": sp.pieceType = 4; break;
             case "Pawn": sp.pieceType = 5; break;
         }
-        if (!playerIsWhite)
+        if (!selectedPiece.isItWhite)
             sp.pieceType += 6;
-        sp.spellName = spellName;
-        //sp.isWhiteSpell = 
+        sp.endSpellTurn = turnCount + 4;
+        sp.newID = pieceID;
+        sp.currentX = x;
+        sp.currentY = y;
         spelledPieces.Add(sp);
         activeChessmen.Remove(selectedPiece.gameObject);
         Destroy(selectedPiece.gameObject);
 
         switch (spellName) {
             case "Upgrade":
-
                 if (isWhiteTurn)
                     spawnSpellMan(0, x, y);
                 else
-                    spawnSpellMan(0, x, y);
+                    spawnSpellMan(1, x, y);
                 break;
             case "Stun":
                 // Stun func
                 break;
         }
+
         BoardHighlights.Instance.hideHighlights();
-        swapTurn();
         isSpellMove = false;
     }
-    [SerializeField] bool resetSpells;
-    private void resetSpell() {
-
-        if (spelledPieces.Count > 0 && resetSpells) {
-            foreach (spelledPiece item in spelledPieces) {
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        if (chessMen[i, j] != null) {
-                            if (chessMen[i, j].GetType() == typeof(Master)) {
-                                activeChessmen.Remove(chessMen[i, j].gameObject);
-                                Destroy(chessMen[i, j].gameObject);
-                                spawnChessman(item.pieceType, i, j);
-                            }
-                        }
+    private void spellCheck() {
+        for (int i = spelledPieces.Count - 1; i >= 0; i--) {
+            spelledPiece sp = spelledPieces[i];
+            if (sp.endSpellTurn == turnCount) {
+                foreach (ChessPieces cs in chessMen) {
+                    if (cs != null && cs.id == sp.newID) {
+                        activeChessmen.Remove(cs.gameObject);
+                        spawnChessman(sp.pieceType, cs.currentX, cs.currentY);
+                        Destroy(cs.gameObject);
+                        spelledPieces.Remove(sp);
+                        break;
                     }
                 }
+            } else if (sp.endSpellTurn == turnCount + 2) {
+                Destroy(tempSpellObjects[sp.currentX, sp.currentY].GetComponent<Cooldown>());
+                //Destroy(tempSpellObjects[sp.currentX, sp.currentY].transform.GetChild(0));
+                chessMen[sp.currentX, sp.currentY] = tempSpellObjects[sp.currentX, sp.currentY].GetComponent<ChessPieces>();
+                chessMen[sp.currentX, sp.currentY].setPosition(sp.currentX, sp.currentY);
+                tempSpellObjects[sp.currentX, sp.currentY] = null;
             }
         }
-
     }
     private void Update() {
-        if (isWhiteTurn != playerIsWhite)
-            resetSpells = true;
-        else if (Input.GetMouseButtonDown(0))
-            resetSpells = false;
-        if (resetSpells && isWhiteTurn == playerIsWhite) {
-            resetSpell();
-            resetSpells = false;
-        }
-
         updateSelection();
         if (isSpellMove) {
             if (Input.GetMouseButtonDown(0)) {
@@ -128,6 +123,7 @@ public class BoardManager : MonoBehaviour {
                         com.spellUpgrade(spellName, selectionX, selectionY);
                     } else
                         BoardHighlights.Instance.hideHighlights();
+                    isSpellMove = false;
                 }
             }
         } else {
@@ -143,7 +139,6 @@ public class BoardManager : MonoBehaviour {
                         selectChessPiece(selectionX, selectionY);
                     } else {
                         com.sendMove(selectedPiece.currentX, selectedPiece.currentY, selectionX, selectionY);
-                        resetSpells = false;
                     }
                 }
             }
@@ -193,14 +188,10 @@ public class BoardManager : MonoBehaviour {
                 moveChessPiece(x, y, 6, 7);
             selectedPiece = chessMen[4, 7];
         }
-        // For fixing the issue that playing in a row
-        // isWhiteTurn = !isWhiteTurn;
-        // turnCount--;
     }
     private bool isMoveRepeating;
     public void moveChessPiece(int selectionX, int selectionY, int x, int y) {
         selectChessPiece(selectionX, selectionY);
-        Debug.Log(selectedPiece.GetType());
         if (allowedMoves[x, y]) {
             ChessPieces c = chessMen[x, y];
             if (c != null && c.isItWhite != isWhiteTurn) {
@@ -321,18 +312,28 @@ public class BoardManager : MonoBehaviour {
             selectionY = -1;
         }
     }
+    private int pieceID = 100;
     private void spawnChessman(int index, int x, int y) {
         GameObject go = Instantiate(chessmanPrefabs[index], getTileCenter(x, y), Quaternion.identity) as GameObject;
         go.transform.SetParent(transform);
         chessMen[x, y] = go.GetComponent<ChessPieces>();
         chessMen[x, y].setPosition(x, y);
+        chessMen[x, y].id = pieceID;
+        pieceID++;
         activeChessmen.Add(go);
     }
+    GameObject[,] tempSpellObjects = new GameObject[8, 8];
     private void spawnSpellMan(int index, int x, int y) {
         GameObject go = Instantiate(spelledPrefabs[index], getTileCenter(x, y), Quaternion.identity) as GameObject;
+      //  GameObject go2 = Instantiate(spelledPrefabs[2], go.transform, false);
         go.transform.SetParent(transform);
-        chessMen[x, y] = go.GetComponent<ChessPieces>();
+        //go2.transform.SetParent(go.transform);
+        tempSpellObjects[x, y] = go;
+        chessMen[x, y] = go.GetComponent<Cooldown>();
+        chessMen[x, y].isItWhite = playerIsWhite;
         chessMen[x, y].setPosition(x, y);
+        tempSpellObjects[x, y].GetComponent<Master>().id = pieceID;
+        pieceID++;
         activeChessmen.Add(go);
     }
     private void DrawChessboard() {
@@ -353,16 +354,17 @@ public class BoardManager : MonoBehaviour {
 
         }
     }
-    [SerializeField] private int turnCount = 0;
     private void swapTurn() {
         turnCount++;
+        spellCheck();
         isWhiteTurn = !isWhiteTurn;
     }
 
 }
-struct spelledPiece {
-    public string spellName;
+public struct spelledPiece {
+    public int endSpellTurn;
     public int pieceType;
-    public bool isWhiteSpell;
-    public int turnCount;
+    public int newID;
+    public int currentX;
+    public int currentY;
 }

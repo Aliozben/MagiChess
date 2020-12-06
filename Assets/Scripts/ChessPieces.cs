@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class ChessPieces : MonoBehaviour {
     public int currentX { get; set; }
     public int currentY { get; set; }
+    public int id;
     public bool isItWhite;
 
     public void setPosition (int x, int y) {
