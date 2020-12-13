@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\Piece Scripts\Rook.cs" />
      <Compile Include="Assets\Scripts\Server.cs" />
      <Compile Include="Assets\Scripts\SpellCards.cs" />
+     <Compile Include="Assets\SpellManager.cs" />
      <None Include="Assets\Tiny Chess Stone Chess Piece\Readme Eng.txt" />
      <None Include="Assets\QuickOutline\Resources\Shaders\OutlineMask.shader" />
      <None Include="Assets\QuickOutline\Readme.txt" />

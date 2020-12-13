@@ -33,8 +33,8 @@ public class Command : MonoBehaviour {
         msg += y.ToString();
         client.send(msg);
     }
-    public void spellUpgrade(string spellName, int x, int y) {
-        string msg = "CSUP|";
+    public void sendSpell(string spellName, int x, int y) {
+        string msg = "CSPELL|";
         msg += spellName + "|";
         msg += x.ToString() + "|";
         msg += y.ToString() + "|";

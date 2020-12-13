@@ -21,16 +21,18 @@ public class BoardManager : MonoBehaviour {
     public GameObject cameraAngle;
     public GameObject goLight;
     public GameObject upgradePanel;
-    [SerializeField] private int turnCount = 0;
+    public int turnCount = 1;
     Command com;
     SpellCards spells;
-    [SerializeField] private bool isSpellMove;
+    private bool isSpellMove;
     private string spellName;
+    private SpellManager cooldownManager;
     public List<GameObject> spelledPrefabs;
     private void Start() {
         client = FindObjectOfType<Client>();
         com = FindObjectOfType<Command>();
         spells = FindObjectOfType<SpellCards>();
+        cooldownManager = FindObjectOfType<SpellManager>();
 
         playerIsWhite = client.isHost;
         if (!playerIsWhite) {
@@ -40,77 +42,87 @@ public class BoardManager : MonoBehaviour {
         }
         Instance = this;
         spawnAllChessmen();
+
+        cooldownManager.spellButtonsEnable(isWhiteTurn == playerIsWhite);
     }
     public void spellHighlight(string spellName) {
         BoardHighlights.Instance.hideHighlights();
-        isSpellMove = true;
-        this.spellName = spellName;
-        switch (spellName) {
-            case "Upgrade":
-                allowedMoves = spells.possibleUpgrade();
-                break;
-            case "Stun":
-                // Stun func
-                break;
+        if (isSpellMove) {
+            isSpellMove = false;
+        } else {
+            isSpellMove = true;
+            this.spellName = spellName;
+            switch (spellName) {
+                case "Upgrade":
+                    allowedMoves = spells.possibleUpgrade();
+                    break;
+                case "Stun":
+                    allowedMoves = spells.possibleStun();
+                    break;
+            }
+            BoardHighlights.Instance.highlightAllowedMoves(allowedMoves);
         }
-        BoardHighlights.Instance.highlightAllowedMoves(allowedMoves);
     }
     List<spelledPiece> spelledPieces = new List<spelledPiece>();
     public void actionSpell(string spellName, int x, int y) {
-        selectedPiece = chessMen[x, y];
-        string type = selectedPiece.GetType().ToString();
         spelledPiece sp = new spelledPiece();
-        switch (type) {
-            case "Queen": sp.pieceType = 1; break;
-            case "Rook": sp.pieceType = 2; break;
-            case "Bishop": sp.pieceType = 3; break;
-            case "Knight": sp.pieceType = 4; break;
-            case "Pawn": sp.pieceType = 5; break;
-        }
-        if (!selectedPiece.isItWhite)
-            sp.pieceType += 6;
-        sp.endSpellTurn = turnCount + 4;
+        sp.spellName = spellName;
         sp.newID = pieceID;
-        sp.currentX = x;
-        sp.currentY = y;
-        spelledPieces.Add(sp);
-        activeChessmen.Remove(selectedPiece.gameObject);
-        Destroy(selectedPiece.gameObject);
-
-        switch (spellName) {
-            case "Upgrade":
-                if (isWhiteTurn)
-                    spawnSpellMan(0, x, y);
-                else
-                    spawnSpellMan(1, x, y);
-                break;
-            case "Stun":
-                // Stun func
-                break;
+        if (spellName == "Upgrade") {
+            selectedPiece = chessMen[x, y];
+            string type = selectedPiece.GetType().ToString();
+            switch (type) {
+                case "Queen": sp.pieceType = 1; break;
+                case "Rook": sp.pieceType = 2; break;
+                case "Bishop": sp.pieceType = 3; break;
+                case "Knight": sp.pieceType = 4; break;
+                case "Pawn": sp.pieceType = 5; break;
+            }
+            if (!selectedPiece.isItWhite)
+                sp.pieceType += 6;
+            sp.endSpellTurn = turnCount + 4;
+            activeChessmen.Remove(selectedPiece.gameObject);
+            Destroy(selectedPiece.gameObject);
+            spawnSpellMan(spellName, x, y);
+        } else if (spellName == "Stun") {
+            chessMen[x, y].enabled = false;
+            spawnSpellMan(spellName, x, y);
+            sp.endSpellTurn = turnCount + 3;
         }
-
+        sp.x = x;
+        sp.y = y;
+        spelledPieces.Add(sp);
         BoardHighlights.Instance.hideHighlights();
         isSpellMove = false;
     }
     private void spellCheck() {
         for (int i = spelledPieces.Count - 1; i >= 0; i--) {
             spelledPiece sp = spelledPieces[i];
-            if (sp.endSpellTurn == turnCount) {
-                foreach (ChessPieces cs in chessMen) {
-                    if (cs != null && cs.id == sp.newID) {
-                        activeChessmen.Remove(cs.gameObject);
-                        spawnChessman(sp.pieceType, cs.currentX, cs.currentY);
-                        Destroy(cs.gameObject);
-                        spelledPieces.Remove(sp);
-                        break;
+            if (sp.spellName == "Upgrade") {
+                if (sp.endSpellTurn == turnCount) {
+                    foreach (ChessPieces cs in chessMen) {
+                        if (cs != null && cs.id == sp.newID) {
+                            activeChessmen.Remove(cs.gameObject);
+                            spawnChessman(sp.pieceType, cs.currentX, cs.currentY);
+                            Destroy(cs.gameObject);
+                            spelledPieces.Remove(sp);
+                            break;
+                        }
                     }
+                } else if (sp.endSpellTurn == turnCount + 2) {
+                    Destroy(tempSpellObjects[sp.x, sp.y].GetComponent<Cooldown>());
+                    Destroy(tempSpellObjects[sp.x, sp.y].transform.GetChild(0).gameObject);
+                    chessMen[sp.x, sp.y] = tempSpellObjects[sp.x, sp.y].GetComponent<ChessPieces>();
+                    chessMen[sp.x, sp.y].setPosition(sp.x, sp.y);
+                    tempSpellObjects[sp.x, sp.y] = null;
                 }
-            } else if (sp.endSpellTurn == turnCount + 2) {
-                Destroy(tempSpellObjects[sp.currentX, sp.currentY].GetComponent<Cooldown>());
-                //Destroy(tempSpellObjects[sp.currentX, sp.currentY].transform.GetChild(0));
-                chessMen[sp.currentX, sp.currentY] = tempSpellObjects[sp.currentX, sp.currentY].GetComponent<ChessPieces>();
-                chessMen[sp.currentX, sp.currentY].setPosition(sp.currentX, sp.currentY);
-                tempSpellObjects[sp.currentX, sp.currentY] = null;
+            } else if (sp.spellName == "Stun") {
+                if (sp.endSpellTurn == turnCount) {
+                    Destroy(chessMen[sp.x, sp.y].gameObject.GetComponent<Cooldown>());
+                    chessMen[sp.x, sp.y].gameObject.GetComponent<ChessPieces>().enabled = true;
+                    chessMen[sp.x, sp.y] = chessMen[sp.x, sp.y].gameObject.GetComponent<ChessPieces>();
+                    tempSpellObjects[sp.x, sp.y] = null;
+                }
             }
         }
     }
@@ -120,7 +132,8 @@ public class BoardManager : MonoBehaviour {
             if (Input.GetMouseButtonDown(0)) {
                 if (selectionX >= 0 && selectionY >= 0) {
                     if (allowedMoves[selectionX, selectionY]) {
-                        com.spellUpgrade(spellName, selectionX, selectionY);
+                        com.sendSpell(spellName, selectionX, selectionY);
+                        cooldownManager.startCooldown(spellName);
                     } else
                         BoardHighlights.Instance.hideHighlights();
                     isSpellMove = false;
@@ -323,18 +336,30 @@ public class BoardManager : MonoBehaviour {
         activeChessmen.Add(go);
     }
     GameObject[,] tempSpellObjects = new GameObject[8, 8];
-    private void spawnSpellMan(int index, int x, int y) {
-        GameObject go = Instantiate(spelledPrefabs[index], getTileCenter(x, y), Quaternion.identity) as GameObject;
-      //  GameObject go2 = Instantiate(spelledPrefabs[2], go.transform, false);
-        go.transform.SetParent(transform);
-        //go2.transform.SetParent(go.transform);
-        tempSpellObjects[x, y] = go;
-        chessMen[x, y] = go.GetComponent<Cooldown>();
-        chessMen[x, y].isItWhite = playerIsWhite;
-        chessMen[x, y].setPosition(x, y);
-        tempSpellObjects[x, y].GetComponent<Master>().id = pieceID;
+    private void spawnSpellMan(string spellName, int x, int y) {
+        if (spellName == "Upgrade") {
+            int index = (isWhiteTurn) ? 0 : 1;
+            GameObject go = Instantiate(spelledPrefabs[index], getTileCenter(x, y), Quaternion.identity) as GameObject;
+            go.transform.SetParent(transform);
+            GameObject go2 = Instantiate(spelledPrefabs[2], getTileCenter(x, y), Quaternion.identity) as GameObject;
+            go2.transform.SetParent(go.transform);
+            chessMen[x, y] = go.GetComponent<Cooldown>();
+            chessMen[x, y].isItWhite = playerIsWhite;
+            chessMen[x, y].setPosition(x, y);
+            tempSpellObjects[x, y] = go;
+            tempSpellObjects[x, y].GetComponent<Master>().id = pieceID;
+            activeChessmen.Add(go);
+        } else if (spellName == "Stun") {
+            GameObject go = Instantiate(spelledPrefabs[2], getTileCenter(x, y), Quaternion.identity) as GameObject;
+            //go.name = chessMen[x, y].GetType().ToString();
+            tempSpellObjects[x, y] = go;
+            chessMen[x, y].gameObject.GetComponent<ChessPieces>().enabled = false;
+            chessMen[x, y] = chessMen[x, y].gameObject.AddComponent<Cooldown>();
+            //chessMen[x, y] = go2.GetComponent<ChessPieces>();
+            chessMen[x, y].setPosition(x, y);
+            chessMen[x, y].isItWhite = !isWhiteTurn;
+        }
         pieceID++;
-        activeChessmen.Add(go);
     }
     private void DrawChessboard() {
         Vector3 widthLine = Vector3.right * 8;
@@ -358,13 +383,14 @@ public class BoardManager : MonoBehaviour {
         turnCount++;
         spellCheck();
         isWhiteTurn = !isWhiteTurn;
+        cooldownManager.spellButtonsEnable(isWhiteTurn == playerIsWhite);
     }
-
 }
 public struct spelledPiece {
+    public string spellName;
     public int endSpellTurn;
     public int pieceType;
     public int newID;
-    public int currentX;
-    public int currentY;
+    public int x;
+    public int y;
 }

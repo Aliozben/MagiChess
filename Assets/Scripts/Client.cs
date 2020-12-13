@@ -69,7 +69,7 @@ public class Client : MonoBehaviour {
             case "SUPGR": //Upgrade
                 BoardManager.Instance.pawnUpgrade(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]));
                 break;
-            case "SSUP": //Spell Upgrade
+            case "SSPELL": //Spell Upgrade
                 BoardManager.Instance.actionSpell(aData[1], int.Parse(aData[2]), int.Parse(aData[3]));
                 break;
         }
