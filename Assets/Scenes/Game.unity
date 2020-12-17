@@ -803,6 +803,9 @@ MonoBehaviour:
   - {fileID: 8374612300392309889, guid: dcbed80aad1acab448a2931aac84c996, type: 3}
   - {fileID: 2734673734572656956, guid: f26abccf37b95c94a8aa4a1a0e0f852b, type: 3}
   - {fileID: 8132178209870563801, guid: 1f2474272a88d0b4890faaa1418c7589, type: 3}
+  X: 2
+  Y: 0
+  Height: 2
 --- !u!4 &558276500
 Transform:
   m_ObjectHideFlags: 0

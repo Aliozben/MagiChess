@@ -28,6 +28,15 @@ public class BoardManager : MonoBehaviour {
     private string spellName;
     private SpellManager cooldownManager;
     public List<GameObject> spelledPrefabs;
+    //---------------------------------------------------------------------------
+    private Vector3 pointStart;
+    private Vector3 pointMid;
+    private Vector3 pointEnd;
+    private Vector3 pointSM;
+    private Vector3 pointME;
+    [SerializeField] int Height;
+    private float interpolateAmount;
+    //-----------------------------------------------------------------
     private void Start() {
         client = FindObjectOfType<Client>();
         com = FindObjectOfType<Command>();
@@ -42,7 +51,6 @@ public class BoardManager : MonoBehaviour {
         }
         Instance = this;
         spawnAllChessmen();
-
         cooldownManager.spellButtonsEnable(isWhiteTurn == playerIsWhite);
     }
     public void spellHighlight(string spellName) {
@@ -141,7 +149,7 @@ public class BoardManager : MonoBehaviour {
             }
         } else {
             if (Input.GetMouseButtonDown(0) && !upgradePanel.activeSelf) {
-                if (selectionX >= 0 && selectionY >= 0) {
+                if (selectionX >= 0 && selectionY >= 0 && !stillPieceMoving) {
                     if (selectedPiece == null) {
                         if (chessMen[selectionX, selectionY] == null) {
                             return;
@@ -155,6 +163,16 @@ public class BoardManager : MonoBehaviour {
                     }
                 }
             }
+        }
+        if (cordX || cordY || cordZ) {
+            cordX = (pointEnd.x > pointStart.x) ? selectedPiece.transform.position.x < pointEnd.x - .1f : selectedPiece.transform.position.x > pointEnd.x + .1f;
+            cordY = selectedPiece.transform.position.y > pointEnd.y + .1f;
+            cordZ = (pointEnd.z > pointStart.z) ? selectedPiece.transform.position.z < pointEnd.z - .1f : selectedPiece.transform.position.z > pointEnd.z + .1f;
+            interpolateAmount = (interpolateAmount + Time.deltaTime) % 1f;
+        } else if (stillPieceMoving) {
+            selectedPiece.transform.position = getTileCenter((int)pointEnd.x, (int)pointEnd.z);
+            selectedPiece = null;
+            stillPieceMoving = false;
         }
 
     }
@@ -202,9 +220,28 @@ public class BoardManager : MonoBehaviour {
             selectedPiece = chessMen[4, 7];
         }
     }
+    bool cordX, cordY, cordZ;
+    bool stillPieceMoving; //0 do nothing - 1 
+    private void MoveCords(int endX, int endY) {
+        pointStart = selectedPiece.transform.position;
+        pointEnd = new Vector3(endX + .5f, pointStart.y, endY + .5f);
+        Vector3 tempMid = pointStart + ((pointEnd - pointStart) / 2);
+        tempMid.y += Height;
+        pointMid = tempMid;
+        cordX = cordY = cordZ = true;
+        stillPieceMoving = true;
+    }
+    private void FixedUpdate() {
+        if (cordX || cordY || cordZ) {
+            pointSM = Vector3.Lerp(pointStart, pointMid, interpolateAmount);
+            pointME = Vector3.Lerp(pointMid, pointEnd, interpolateAmount);
+            selectedPiece.transform.position = Vector3.Lerp(pointSM, pointME, interpolateAmount);
+        }
+    }
     private bool isMoveRepeating;
     public void moveChessPiece(int selectionX, int selectionY, int x, int y) {
         selectChessPiece(selectionX, selectionY);
+        selectedPiece.GetComponent<Outline>().enabled = false;
         if (allowedMoves[x, y]) {
             ChessPieces c = chessMen[x, y];
             if (c != null && c.isItWhite != isWhiteTurn) {
@@ -236,7 +273,7 @@ public class BoardManager : MonoBehaviour {
                 isMoveRepeating = true;
             }
             chessMen[selectedPiece.currentX, selectedPiece.currentY] = null;
-            selectedPiece.transform.position = getTileCenter(x, y);
+            MoveCords(x, y);
             selectedPiece.setPosition(x, y);
 
             if (selectedPiece.GetType() == typeof(King))
@@ -246,11 +283,14 @@ public class BoardManager : MonoBehaviour {
             chessMen[x, y] = selectedPiece;
             if (!isMoveRepeating)
                 swapTurn();
+        } else {
+            selectedPiece = null;
         }
-        selectedPiece.GetComponent<Outline>().enabled = false;
         BoardHighlights.Instance.hideHighlights();
-        selectedPiece = null;
         isMoveRepeating = false;
+    }
+    private void endMove() {
+
     }
     private void gameOver() {
         if (isWhiteTurn)

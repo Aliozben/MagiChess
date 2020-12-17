@@ -43,6 +43,7 @@
      <Compile Include="Assets\Scripts\Client.cs" />
      <Compile Include="Assets\Scripts\Command.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\MoveAnimation.cs" />
      <Compile Include="Assets\Scripts\Piece Scripts\Bishop.cs" />
      <Compile Include="Assets\Scripts\Piece Scripts\Cooldown.cs" />
      <Compile Include="Assets\Scripts\Piece Scripts\King.cs" />
