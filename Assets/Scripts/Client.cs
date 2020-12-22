@@ -13,8 +13,10 @@ public class Client : MonoBehaviour {
     private StreamWriter writer;
     private StreamReader reader;
     private List<gameClient> players = new List<gameClient>();
+    //GameManager GM;
     private void Start() {
         DontDestroyOnLoad(gameObject);
+        //GM = FindObjectOfType<GameManager>();
     }
     public bool connectToServer(string host, int port) {
         if (socketReady)
@@ -51,6 +53,7 @@ public class Client : MonoBehaviour {
         writer.Flush();
     }
 
+
     //Read messages from the server
     private void onIncomingData(string data) {
         Debug.Log("CLIENT: " + data);
@@ -73,6 +76,9 @@ public class Client : MonoBehaviour {
                 break;
             case "SSPELL": //Spell Upgrade
                 BoardManager.Instance.actionSpell(aData[1], int.Parse(aData[2]), int.Parse(aData[3]));
+                break;
+            case "SCHAT": //Chat Bubble                
+                ChatBubble.createChatBubble(BoardManager.Instance.chatPanel, GameManager.Instance.chatBubble, bool.Parse(aData[1]), aData[2]);
                 break;
         }
     }

@@ -52,3 +52,5 @@ MonoBehaviour:
     type: 3}
   nameInput: {fileID: 0}
   IPText: {fileID: 0}
+  chatBubble: {fileID: 1314794035928358479, guid: d377ebc0819883842819832569172b22,
+    type: 3}

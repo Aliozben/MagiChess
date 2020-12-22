@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
     public GameObject clientPrefab;
     public InputField nameInput;
     public Text IPText;
+    public RectTransform chatBubble;
     private void Start() {
         Instance = this;
         mainMenu.SetActive(true);

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class BoardManager : MonoBehaviour {
     public static BoardManager Instance { get; set; }
@@ -18,8 +19,8 @@ public class BoardManager : MonoBehaviour {
     public int[] passantMove { get; set; }
     public bool isWhiteTurn = true;
     public bool playerIsWhite;
-    public GameObject cameraAngle;
-    public GameObject goLight;
+    //public GameObject cameraAngle;
+    //public GameObject goLight;
     public GameObject upgradePanel;
     public int turnCount = 1;
     Command com;
@@ -33,6 +34,8 @@ public class BoardManager : MonoBehaviour {
     private Vector3 pointEnd;
     private Vector3 pointSM;
     private Vector3 pointME;
+    public RectTransform chatPanel;
+    private TextMeshPro turnText;
     [SerializeField] int moveHeight;
     private float interpolateAmount = 1;
     private void Start() {
@@ -40,13 +43,8 @@ public class BoardManager : MonoBehaviour {
         com = FindObjectOfType<Command>();
         spells = FindObjectOfType<SpellCards>();
         cooldownManager = FindObjectOfType<SpellManager>();
-
+        turnText = GameObject.Find("TurnText").GetComponent<TextMeshPro>();
         playerIsWhite = client.isHost;
-        // if (!playerIsWhite) {
-        //     cameraAngle.transform.position = new Vector3(4, 6, 10);
-        //     cameraAngle.transform.Rotate(new Vector3(105, 180, 0));
-        //     goLight.transform.Rotate(new Vector3(80, 0, 0));
-        // }
         Instance = this;
         spawnAllChessmen();
         cooldownManager.spellButtonsEnable(isWhiteTurn == playerIsWhite);
@@ -419,6 +417,7 @@ public class BoardManager : MonoBehaviour {
         turnCount++;
         spellCheck();
         isWhiteTurn = !isWhiteTurn;
+        turnText.text = (isWhiteTurn) ? "White is playing.." : "Black is playing..";
         cooldownManager.spellButtonsEnable(isWhiteTurn == playerIsWhite);
     }
 }

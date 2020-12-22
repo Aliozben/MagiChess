@@ -1,13 +1,28 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Command : MonoBehaviour {
     BoardManager BM;
     Client client;
+
+    public GameObject game;
+    public RectTransform game1;
+    public static float bubblePos = 50f;
+
     private void Start() {
         BM = BoardManager.Instance;
+
         client = FindObjectOfType<Client>();
+    }
+    public void sendChatBubble() {
+        string text = GameObject.Find("BubbleText").transform.GetChild(2).GetComponent<Text>().text;
+        RectTransform transform = game.GetComponent<RectTransform>();
+        string msg = "CCHAT|";
+        msg += BM.playerIsWhite + "|";
+        msg += text + "|";
+        client.send(msg);
     }
     public void commandUpgrade(int upgrade) {
         string msg = "CUPGR|";

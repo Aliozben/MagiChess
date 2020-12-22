@@ -87,6 +87,9 @@ public class Server : MonoBehaviour {
             case "CSPELL":
                 broadcast("SSPELL|" + aData[1] + "|" + aData[2] + "|" + aData[3], clients);
                 break;
+            case "CCHAT":
+                broadcast("SCHAT|" + aData[1] + "|" + aData[2], clients);
+                break;
         }
     }
     private void startListening() {
@@ -120,7 +123,7 @@ public class Server : MonoBehaviour {
         }
     }
     public void serverClose() {
-       server.Stop();
+        server.Stop();
     }
 }
 public class serverClient {

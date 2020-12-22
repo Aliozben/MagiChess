@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Upgrade
   - Stun
+  - BubbleText
   layers:
   - Default
   - TransparentFX
