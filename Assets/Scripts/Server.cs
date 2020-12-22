@@ -119,6 +119,9 @@ public class Server : MonoBehaviour {
             return false;
         }
     }
+    public void serverClose() {
+       server.Stop();
+    }
 }
 public class serverClient {
     public string clientName;

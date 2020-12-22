@@ -28,15 +28,13 @@ public class BoardManager : MonoBehaviour {
     private string spellName;
     private SpellManager cooldownManager;
     public List<GameObject> spelledPrefabs;
-    //---------------------------------------------------------------------------
     private Vector3 pointStart;
     private Vector3 pointMid;
     private Vector3 pointEnd;
     private Vector3 pointSM;
     private Vector3 pointME;
-    [SerializeField] int Height;
-    private float interpolateAmount;
-    //-----------------------------------------------------------------
+    [SerializeField] int moveHeight;
+    private float interpolateAmount = 1;
     private void Start() {
         client = FindObjectOfType<Client>();
         com = FindObjectOfType<Command>();
@@ -44,11 +42,11 @@ public class BoardManager : MonoBehaviour {
         cooldownManager = FindObjectOfType<SpellManager>();
 
         playerIsWhite = client.isHost;
-        if (!playerIsWhite) {
-            cameraAngle.transform.position = new Vector3(4, 6, 10);
-            cameraAngle.transform.Rotate(new Vector3(105, 180, 0));
-            goLight.transform.Rotate(new Vector3(80, 0, 0));
-        }
+        // if (!playerIsWhite) {
+        //     cameraAngle.transform.position = new Vector3(4, 6, 10);
+        //     cameraAngle.transform.Rotate(new Vector3(105, 180, 0));
+        //     goLight.transform.Rotate(new Vector3(80, 0, 0));
+        // }
         Instance = this;
         spawnAllChessmen();
         cooldownManager.spellButtonsEnable(isWhiteTurn == playerIsWhite);
@@ -119,7 +117,7 @@ public class BoardManager : MonoBehaviour {
                     }
                 } else if (sp.endSpellTurn == turnCount + 2) {
                     Destroy(tempSpellObjects[sp.x, sp.y].GetComponent<Cooldown>());
-                    Destroy(tempSpellObjects[sp.x, sp.y].transform.GetChild(0).gameObject);
+                    Destroy(tempSpellObjects[sp.x, sp.y].transform.GetChild(1).gameObject);
                     chessMen[sp.x, sp.y] = tempSpellObjects[sp.x, sp.y].GetComponent<ChessPieces>();
                     chessMen[sp.x, sp.y].setPosition(sp.x, sp.y);
                     tempSpellObjects[sp.x, sp.y] = null;
@@ -134,10 +132,14 @@ public class BoardManager : MonoBehaviour {
             }
         }
     }
+    private bool isPanelOpen;
+    public void panelState(bool _panelState) {
+        isPanelOpen = _panelState;
+    }
     private void Update() {
         updateSelection();
         if (isSpellMove) {
-            if (Input.GetMouseButtonDown(0)) {
+            if (Input.GetMouseButtonDown(0) && !isPanelOpen) {
                 if (selectionX >= 0 && selectionY >= 0) {
                     if (allowedMoves[selectionX, selectionY]) {
                         com.sendSpell(spellName, selectionX, selectionY);
@@ -148,7 +150,7 @@ public class BoardManager : MonoBehaviour {
                 }
             }
         } else {
-            if (Input.GetMouseButtonDown(0) && !upgradePanel.activeSelf) {
+            if (Input.GetMouseButtonDown(0) && !isPanelOpen) {
                 if (selectionX >= 0 && selectionY >= 0 && !stillPieceMoving) {
                     if (selectedPiece == null) {
                         if (chessMen[selectionX, selectionY] == null) {
@@ -169,12 +171,14 @@ public class BoardManager : MonoBehaviour {
             cordY = selectedPiece.transform.position.y > pointEnd.y + .1f;
             cordZ = (pointEnd.z > pointStart.z) ? selectedPiece.transform.position.z < pointEnd.z - .1f : selectedPiece.transform.position.z > pointEnd.z + .1f;
             interpolateAmount = (interpolateAmount + Time.deltaTime) % 1f;
+            pointSM = Vector3.Lerp(pointStart, pointMid, interpolateAmount);
+            pointME = Vector3.Lerp(pointMid, pointEnd, interpolateAmount);
+            selectedPiece.transform.position = Vector3.Lerp(pointSM, pointME, interpolateAmount);
         } else if (stillPieceMoving) {
             selectedPiece.transform.position = getTileCenter((int)pointEnd.x, (int)pointEnd.z);
             selectedPiece = null;
             stillPieceMoving = false;
         }
-
     }
     private void selectChessPiece(int x, int y) {
         allowedMoves = chessMen[x, y].possibleMove();
@@ -220,23 +224,16 @@ public class BoardManager : MonoBehaviour {
             selectedPiece = chessMen[4, 7];
         }
     }
-    bool cordX, cordY, cordZ;
-    bool stillPieceMoving; //0 do nothing - 1 
+    private bool cordX, cordY, cordZ;
+    private bool stillPieceMoving;
     private void MoveCords(int endX, int endY) {
         pointStart = selectedPiece.transform.position;
         pointEnd = new Vector3(endX + .5f, pointStart.y, endY + .5f);
         Vector3 tempMid = pointStart + ((pointEnd - pointStart) / 2);
-        tempMid.y += Height;
+        tempMid.y += moveHeight;
         pointMid = tempMid;
         cordX = cordY = cordZ = true;
         stillPieceMoving = true;
-    }
-    private void FixedUpdate() {
-        if (cordX || cordY || cordZ) {
-            pointSM = Vector3.Lerp(pointStart, pointMid, interpolateAmount);
-            pointME = Vector3.Lerp(pointMid, pointEnd, interpolateAmount);
-            selectedPiece.transform.position = Vector3.Lerp(pointSM, pointME, interpolateAmount);
-        }
     }
     private bool isMoveRepeating;
     public void moveChessPiece(int selectionX, int selectionY, int x, int y) {
@@ -255,8 +252,10 @@ public class BoardManager : MonoBehaviour {
 
             if (selectedPiece.GetType() == typeof(Pawn)) {
                 if (y == 7 || y == 0) {
-                    if (isWhiteTurn == playerIsWhite)
+                    if (isWhiteTurn == playerIsWhite) {
                         upgradePanel.SetActive(true);
+                        panelState(true);
+                    }
                     isMoveRepeating = true;
                 }
 
@@ -288,9 +287,6 @@ public class BoardManager : MonoBehaviour {
         }
         BoardHighlights.Instance.hideHighlights();
         isMoveRepeating = false;
-    }
-    private void endMove() {
-
     }
     private void gameOver() {
         if (isWhiteTurn)
@@ -357,7 +353,7 @@ public class BoardManager : MonoBehaviour {
         if (!Camera.main)
             return;
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 25f, LayerMask.GetMask("chessPlane"))) {
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 50f, LayerMask.GetMask("chessPlane"))) {
             selectionX = (int)hit.point.x;
             selectionY = (int)hit.point.z;
         } else {

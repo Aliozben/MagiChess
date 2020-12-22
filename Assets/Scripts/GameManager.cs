@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour {
             c.connectToServer(hostAddress, 6321);
             connectMenu.SetActive(false);
         } catch (System.Exception e) {
+            backButton();
             Debug.Log(e.Message);
         }
     }
@@ -62,15 +63,23 @@ public class GameManager : MonoBehaviour {
         serverMenu.SetActive(false);
         connectMenu.SetActive(false);
         mainMenu.SetActive(true);
-
-        Server s = FindObjectOfType<Server>();
-        if (s != null)
-            Destroy(s.gameObject);
-        Client c = FindObjectOfType<Client>();
-        if (c != null)
-            Destroy(c.gameObject);
+        cancelConnection();
     }
     public void startGame() {
         SceneManager.LoadScene("Game");
+    }
+    public void leaveCurrentGame() {
+        SceneManager.LoadScene("Menu");
+        cancelConnection();
+    }
+    private void cancelConnection() {
+        Server s = FindObjectOfType<Server>();
+        if (s != null) {
+            s.serverClose();
+            Destroy(s.gameObject);
+        }
+        Client c = FindObjectOfType<Client>();
+        if (c != null)
+            Destroy(c.gameObject);
     }
 }

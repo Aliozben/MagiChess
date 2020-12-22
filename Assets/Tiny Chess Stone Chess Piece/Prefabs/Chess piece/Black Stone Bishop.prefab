@@ -246,8 +246,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4964487031023218}
-  - component: {fileID: -693194745171602761}
-  - component: {fileID: 921339176115006556}
+  - component: {fileID: -2363703513316210176}
+  - component: {fileID: -4765432750073613315}
   m_Layer: 0
   m_Name: Black Stone Bishop
   m_TagString: Untagged
@@ -262,7 +262,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1239270685352430}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 3, y: 1.88, z: 0.5}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children:
@@ -277,7 +277,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-693194745171602761
+--- !u!114 &-2363703513316210176
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -291,7 +291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   isItWhite: 0
---- !u!114 &921339176115006556
+--- !u!114 &-4765432750073613315
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -305,7 +305,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 10
+  outlineWidth: 1
   bakeKeys:
   - {fileID: 4300014, guid: 9e6073695a19a02438f379f968446795, type: 3}
   - {fileID: 4300016, guid: 9e6073695a19a02438f379f968446795, type: 3}

@@ -28,6 +28,8 @@ public class Client : MonoBehaviour {
             socketReady = true;
         } catch (System.Exception e) {
             Debug.Log("Socket Error :" + e.Message);
+            GameManager gm = FindObjectOfType<GameManager>();
+            gm.backButton();
         }
         return socketReady;
     }
