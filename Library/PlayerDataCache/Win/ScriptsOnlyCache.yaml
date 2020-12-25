@@ -11,6 +11,7 @@ ScriptsOnlyBuild:
     - GameManager
     - King
     - Knight
+    - LoadingAnimation
     - Master
     - Outline
     - Pawn
@@ -77,65 +78,67 @@ ScriptsOnlyBuild:
     - Class: 111
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11182}
+      Script: {instanceID: 11184}
     - Class: 114
-      Script: {instanceID: 11338}
+      Script: {instanceID: 11350}
     - Class: 114
-      Script: {instanceID: 11378}
+      Script: {instanceID: 11390}
     - Class: 114
-      Script: {instanceID: 11424}
+      Script: {instanceID: 11436}
     - Class: 114
-      Script: {instanceID: 11468}
+      Script: {instanceID: 11480}
     - Class: 114
-      Script: {instanceID: 11474}
+      Script: {instanceID: 11486}
     - Class: 114
-      Script: {instanceID: 11498}
+      Script: {instanceID: 11512}
     - Class: 114
-      Script: {instanceID: 11502}
+      Script: {instanceID: 11516}
     - Class: 114
-      Script: {instanceID: 11596}
+      Script: {instanceID: 11612}
     - Class: 114
-      Script: {instanceID: 11648}
+      Script: {instanceID: 11666}
     - Class: 114
-      Script: {instanceID: 11664}
+      Script: {instanceID: 11682}
     - Class: 114
-      Script: {instanceID: 11774}
+      Script: {instanceID: 11798}
     - Class: 114
-      Script: {instanceID: 11778}
+      Script: {instanceID: 11802}
     - Class: 114
-      Script: {instanceID: 11918}
+      Script: {instanceID: 11948}
     - Class: 114
-      Script: {instanceID: 12002}
+      Script: {instanceID: 12032}
     - Class: 114
-      Script: {instanceID: 12092}
-    - Class: 114
-      Script: {instanceID: 12162}
+      Script: {instanceID: 12126}
     - Class: 114
       Script: {instanceID: 12198}
     - Class: 114
-      Script: {instanceID: 12350}
+      Script: {instanceID: 12234}
     - Class: 114
-      Script: {instanceID: 12352}
+      Script: {instanceID: 12390}
     - Class: 114
-      Script: {instanceID: 12384}
+      Script: {instanceID: 12392}
     - Class: 114
-      Script: {instanceID: 12516}
+      Script: {instanceID: 12426}
     - Class: 114
-      Script: {instanceID: 12560}
+      Script: {instanceID: 12564}
     - Class: 114
-      Script: {instanceID: 12582}
+      Script: {instanceID: 12610}
     - Class: 114
-      Script: {instanceID: 12646}
+      Script: {instanceID: 12636}
     - Class: 114
-      Script: {instanceID: 12662}
+      Script: {instanceID: 12700}
     - Class: 114
-      Script: {instanceID: 12892}
+      Script: {instanceID: 12716}
     - Class: 114
-      Script: {instanceID: 12936}
+      Script: {instanceID: 12874}
     - Class: 114
-      Script: {instanceID: 12996}
+      Script: {instanceID: 12958}
     - Class: 114
-      Script: {instanceID: 13014}
+      Script: {instanceID: 13002}
+    - Class: 114
+      Script: {instanceID: 13062}
+    - Class: 114
+      Script: {instanceID: 13080}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 124
@@ -149,6 +152,8 @@ ScriptsOnlyBuild:
     - Class: 198
       Script: {instanceID: 0}
     - Class: 199
+      Script: {instanceID: 0}
+    - Class: 212
       Script: {instanceID: 0}
     - Class: 213
       Script: {instanceID: 0}
@@ -192,41 +197,41 @@ ScriptsOnlyBuild:
     - Class: 111
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11182}
+      Script: {instanceID: 11184}
     - Class: 114
-      Script: {instanceID: 11338}
+      Script: {instanceID: 11350}
     - Class: 114
-      Script: {instanceID: 11378}
+      Script: {instanceID: 11390}
     - Class: 114
-      Script: {instanceID: 11502}
+      Script: {instanceID: 11516}
     - Class: 114
-      Script: {instanceID: 11664}
+      Script: {instanceID: 11682}
     - Class: 114
-      Script: {instanceID: 11778}
+      Script: {instanceID: 11802}
     - Class: 114
-      Script: {instanceID: 11804}
-    - Class: 114
-      Script: {instanceID: 12162}
+      Script: {instanceID: 11828}
     - Class: 114
       Script: {instanceID: 12198}
     - Class: 114
-      Script: {instanceID: 12350}
+      Script: {instanceID: 12234}
     - Class: 114
-      Script: {instanceID: 12352}
+      Script: {instanceID: 12390}
     - Class: 114
-      Script: {instanceID: 12384}
+      Script: {instanceID: 12392}
     - Class: 114
-      Script: {instanceID: 12398}
+      Script: {instanceID: 12426}
     - Class: 114
-      Script: {instanceID: 12582}
+      Script: {instanceID: 12440}
     - Class: 114
-      Script: {instanceID: 12646}
+      Script: {instanceID: 12636}
     - Class: 114
-      Script: {instanceID: 12794}
+      Script: {instanceID: 12700}
     - Class: 114
-      Script: {instanceID: 12936}
+      Script: {instanceID: 12858}
     - Class: 114
-      Script: {instanceID: 12996}
+      Script: {instanceID: 13002}
+    - Class: 114
+      Script: {instanceID: 13062}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -286,6 +291,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: ActivationTrack
+  - hash:
+      serializedVersion: 2
+      Hash: ea4170b3916fcfda99bccc3f6b157b14
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: shakeScript
   - hash:
       serializedVersion: 2
       Hash: 72712369a7c681ad84fc255a5ec0b333
@@ -366,7 +377,7 @@ ScriptsOnlyBuild:
     className: SignalAsset
   - hash:
       serializedVersion: 2
-      Hash: 20e5868007bc74d67022ca4b5ac37394
+      Hash: 7f87c844d0b9d0faae90d53ef071c6a7
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BoardManager
@@ -672,6 +683,12 @@ ScriptsOnlyBuild:
     className: TMP_StyleSheet
   - hash:
       serializedVersion: 2
+      Hash: 12a742c7e8c78993f7a40d8465ba4c48
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: LoadingAnimation
+  - hash:
+      serializedVersion: 2
       Hash: df434544c9f7b33d1cc7e635b180d279
     assemblyName: Unity.TextMeshPro.dll
     namespaceName: TMPro
@@ -776,4 +793,4 @@ ScriptsOnlyBuild:
   scenePathNames:
   - Assets/Scenes/Menu.unity
   - Assets/Scenes/Game.unity
-  playerPath: C:/Users/Abi/Desktop/3Dchess.exe
+  playerPath: C:/Users/Abi/Desktop/magiChess/3Dchess.exe

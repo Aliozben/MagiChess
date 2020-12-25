@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,6 +38,7 @@ public class BoardManager : MonoBehaviour {
     private TextMeshPro turnText;
     [SerializeField] int moveHeight;
     private float interpolateAmount = 1;
+    [SerializeField] SpriteRenderer loadingSprite;
     private void Start() {
         client = FindObjectOfType<Client>();
         com = FindObjectOfType<Command>();
@@ -417,7 +418,15 @@ public class BoardManager : MonoBehaviour {
         turnCount++;
         spellCheck();
         isWhiteTurn = !isWhiteTurn;
-        turnText.text = (isWhiteTurn) ? "White is playing.." : "Black is playing..";
+        if (isWhiteTurn) {
+            turnText.text = "White is playing..";
+            turnText.color = new Color(110, 125, 122);
+            loadingSprite.color = new Color(169, 176, 174);
+        } else {
+            turnText.text = "Black is playing..";
+            turnText.color = new Color(0, 0, 0);
+            loadingSprite.color = new Color(0, 0, 0);
+        }
         cooldownManager.spellButtonsEnable(isWhiteTurn == playerIsWhite);
     }
 }
