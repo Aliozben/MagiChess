@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 4927834380937459833}
   - component: {fileID: 8198286239979896925}
   m_Layer: 0
-  m_Name: White Stone Master
+  m_Name: TestPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

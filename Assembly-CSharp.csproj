@@ -44,6 +44,7 @@
      <Compile Include="Assets\Scripts\Client.cs" />
      <Compile Include="Assets\Scripts\Command.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\LoadingAnimation.cs" />
      <Compile Include="Assets\Scripts\Piece Scripts\Bishop.cs" />
      <Compile Include="Assets\Scripts\Piece Scripts\Cooldown.cs" />
      <Compile Include="Assets\Scripts\Piece Scripts\King.cs" />
@@ -53,10 +54,11 @@
      <Compile Include="Assets\Scripts\Piece Scripts\Queen.cs" />
      <Compile Include="Assets\Scripts\Piece Scripts\Rook.cs" />
      <Compile Include="Assets\Scripts\Server.cs" />
+     <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\SpellCards.cs" />
      <Compile Include="Assets\Scripts\SpellManager.cs" />
+     <Compile Include="Assets\Scripts\shakeScript.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
-     <None Include="Assets\Tiny Chess Stone Chess Piece\Readme Eng.txt" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_Bitmap.shader" />
      <None Include="Assets\QuickOutline\Resources\Shaders\OutlineMask.shader" />
@@ -627,14 +629,14 @@
     <Reference Include="Unity.Rider.Editor">
         <HintPath>C:/Users/Abi/Documents/Projects/3Dchess/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.2D.Sprite.Editor">
+        <HintPath>C:/Users/Abi/Documents/Projects/3Dchess/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
         <HintPath>C:/Users/Abi/Documents/Projects/3Dchess/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
         <HintPath>C:/Users/Abi/Documents/Projects/3Dchess/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.2D.Sprite.Editor">
-        <HintPath>C:/Users/Abi/Documents/Projects/3Dchess/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

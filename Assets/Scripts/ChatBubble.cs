@@ -29,9 +29,6 @@ public class ChatBubble : MonoBehaviour {
         icon = transform.GetChild(0).Find("Icon").GetComponent<Image>();
         textBox = transform.Find("Text").GetComponent<TextMeshProUGUI>();
     }
-    private void Start() {
-        //setup(Icons.Black, "seeasdasdfasdfasdfeseeasdas");
-    }
     private void setup(bool playerIsWhite, string _text) {
         textBox.SetText(_text);
         textBox.ForceMeshUpdate();

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Random = UnityEngine.Random;
 
 public class BoardManager : MonoBehaviour {
     public static BoardManager Instance { get; set; }
@@ -19,8 +20,6 @@ public class BoardManager : MonoBehaviour {
     public int[] passantMove { get; set; }
     public bool isWhiteTurn = true;
     public bool playerIsWhite;
-    //public GameObject cameraAngle;
-    //public GameObject goLight;
     public GameObject upgradePanel;
     public int turnCount = 1;
     Command com;
@@ -39,11 +38,23 @@ public class BoardManager : MonoBehaviour {
     [SerializeField] int moveHeight;
     private float interpolateAmount = 1;
     [SerializeField] SpriteRenderer loadingSprite;
+    private float newPosTimer = .6f;
+    private Vector3 newPos;
+    private Vector3 originPosition;
+    private Quaternion originRotation;
+    public ParticleSystem[] moveAnimations = new ParticleSystem[4];
+    private ParticleSystem auraAnim;
+    private ParticleSystem spawnAnim;
+    public float shake_decay;
+    public float shake_intensity;
+    private float temp_shake_intensity = 0;
+    private SoundManager soundManager;
     private void Start() {
         client = FindObjectOfType<Client>();
         com = FindObjectOfType<Command>();
         spells = FindObjectOfType<SpellCards>();
         cooldownManager = FindObjectOfType<SpellManager>();
+        soundManager = FindObjectOfType<SoundManager>();
         turnText = GameObject.Find("TurnText").GetComponent<TextMeshPro>();
         playerIsWhite = client.isHost;
         Instance = this;
@@ -165,20 +176,47 @@ public class BoardManager : MonoBehaviour {
                 }
             }
         }
-        if (cordX || cordY || cordZ) {
-            cordX = (pointEnd.x > pointStart.x) ? selectedPiece.transform.position.x < pointEnd.x - .1f : selectedPiece.transform.position.x > pointEnd.x + .1f;
-            cordY = selectedPiece.transform.position.y > pointEnd.y + .1f;
-            cordZ = (pointEnd.z > pointStart.z) ? selectedPiece.transform.position.z < pointEnd.z - .1f : selectedPiece.transform.position.z > pointEnd.z + .1f;
-            interpolateAmount = (interpolateAmount + Time.deltaTime) % 1f;
-            pointSM = Vector3.Lerp(pointStart, pointMid, interpolateAmount);
-            pointME = Vector3.Lerp(pointMid, pointEnd, interpolateAmount);
-            selectedPiece.transform.position = Vector3.Lerp(pointSM, pointME, interpolateAmount);
-        } else if (stillPieceMoving) {
-            selectedPiece.transform.position = getTileCenter((int)pointEnd.x, (int)pointEnd.z);
-            selectedPiece = null;
-            stillPieceMoving = false;
+        if (stillPieceMoving) {
+            if (temp_shake_intensity > 0) {
+                selectedPiece.transform.position = originPosition + Random.insideUnitSphere * temp_shake_intensity;
+                selectedPiece.transform.rotation = new Quaternion(
+                    originRotation.x + Random.Range(-temp_shake_intensity, temp_shake_intensity) * .2f,
+                    originRotation.y + Random.Range(-temp_shake_intensity, temp_shake_intensity) * .2f,
+                    originRotation.z + Random.Range(-temp_shake_intensity, temp_shake_intensity) * .2f,
+                    originRotation.w + Random.Range(-temp_shake_intensity, temp_shake_intensity) * .2f);
+                temp_shake_intensity -= shake_decay;
+            } else if (temp_shake_intensity < 0) {
+                selectedPiece.transform.position = newPos;
+                soundManager.moveLoading.Stop();
+                newPosTimer -= Time.deltaTime;
+                if (newPosTimer <= 0f) {
+                    newPosTimer = .6f;
+                    selectedPiece.transform.position = getTileCenter((int)newPos.x, (int)newPos.z);
+                    spawnAnim.transform.position = selectedPiece.transform.position;
+                    spawnAnim.Play();
+                    selectedPiece = null;
+                    stillPieceMoving = false;
+                }
+            }
         }
     }
+    private void startMoveAnim(int x, int y) {
+        if (selectedPiece.isItWhite) {
+            auraAnim = moveAnimations[0];
+            spawnAnim = moveAnimations[1];
+        } else {
+            auraAnim = moveAnimations[2];
+            spawnAnim = moveAnimations[3];
+        }
+        newPos = new Vector3(x, 15f, y);
+        stillPieceMoving = true;
+        auraAnim.transform.position = selectedPiece.transform.position;
+        auraAnim.Play();
+        soundManager.moveLoading.Play();
+        originPosition = selectedPiece.transform.position;
+        originRotation = selectedPiece.transform.rotation;
+        temp_shake_intensity = shake_intensity;
+    } 
     private void selectChessPiece(int x, int y) {
         allowedMoves = chessMen[x, y].possibleMove();
         selectedPiece = chessMen[x, y];
@@ -223,22 +261,13 @@ public class BoardManager : MonoBehaviour {
             selectedPiece = chessMen[4, 7];
         }
     }
-    private bool cordX, cordY, cordZ;
     private bool stillPieceMoving;
-    private void MoveCords(int endX, int endY) {
-        pointStart = selectedPiece.transform.position;
-        pointEnd = new Vector3(endX + .5f, pointStart.y, endY + .5f);
-        Vector3 tempMid = pointStart + ((pointEnd - pointStart) / 2);
-        tempMid.y += moveHeight;
-        pointMid = tempMid;
-        cordX = cordY = cordZ = true;
-        stillPieceMoving = true;
-    }
     private bool isMoveRepeating;
     public void moveChessPiece(int selectionX, int selectionY, int x, int y) {
         selectChessPiece(selectionX, selectionY);
         selectedPiece.GetComponent<Outline>().enabled = false;
         if (allowedMoves[x, y]) {
+            startMoveAnim(x, y);
             ChessPieces c = chessMen[x, y];
             if (c != null && c.isItWhite != isWhiteTurn) {
                 if (c.GetType() == typeof(King)) {
@@ -271,7 +300,6 @@ public class BoardManager : MonoBehaviour {
                 isMoveRepeating = true;
             }
             chessMen[selectedPiece.currentX, selectedPiece.currentY] = null;
-            MoveCords(x, y);
             selectedPiece.setPosition(x, y);
 
             if (selectedPiece.GetType() == typeof(King))
