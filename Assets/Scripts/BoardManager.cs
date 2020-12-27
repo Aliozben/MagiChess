@@ -187,13 +187,14 @@ public class BoardManager : MonoBehaviour {
                 temp_shake_intensity -= shake_decay;
             } else if (temp_shake_intensity < 0) {
                 selectedPiece.transform.position = newPos;
-                soundManager.moveLoading.Stop();
+                //soundManager.moveLoading.Stop();
                 newPosTimer -= Time.deltaTime;
                 if (newPosTimer <= 0f) {
                     newPosTimer = .6f;
                     selectedPiece.transform.position = getTileCenter((int)newPos.x, (int)newPos.z);
                     spawnAnim.transform.position = selectedPiece.transform.position;
                     spawnAnim.Play();
+                    soundManager.moveSpawn.Play();
                     selectedPiece = null;
                     stillPieceMoving = false;
                 }
