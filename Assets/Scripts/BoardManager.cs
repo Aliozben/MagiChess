@@ -49,6 +49,8 @@ public class BoardManager : MonoBehaviour {
     public float shake_intensity;
     private float temp_shake_intensity = 0;
     private SoundManager soundManager;
+    public GameObject disconnectedPanel;
+    public int restartGameRequests = 0;
     private void Start() {
         client = FindObjectOfType<Client>();
         com = FindObjectOfType<Command>();
@@ -60,6 +62,10 @@ public class BoardManager : MonoBehaviour {
         Instance = this;
         spawnAllChessmen();
         cooldownManager.spellButtonsEnable(isWhiteTurn == playerIsWhite);
+    }
+    public void returnMainMenu() {
+        Destroy(FindObjectOfType<GameManager>().gameObject);
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
     }
     public void spellHighlight(string spellName) {
         BoardHighlights.Instance.hideHighlights();
@@ -187,7 +193,6 @@ public class BoardManager : MonoBehaviour {
                 temp_shake_intensity -= shake_decay;
             } else if (temp_shake_intensity < 0) {
                 selectedPiece.transform.position = newPos;
-                //soundManager.moveLoading.Stop();
                 newPosTimer -= Time.deltaTime;
                 if (newPosTimer <= 0f) {
                     newPosTimer = .6f;
@@ -200,6 +205,7 @@ public class BoardManager : MonoBehaviour {
                 }
             }
         }
+        restartGame();
     }
     private void startMoveAnim(int x, int y) {
         if (selectedPiece.isItWhite) {
@@ -217,7 +223,7 @@ public class BoardManager : MonoBehaviour {
         originPosition = selectedPiece.transform.position;
         originRotation = selectedPiece.transform.rotation;
         temp_shake_intensity = shake_intensity;
-    } 
+    }
     private void selectChessPiece(int x, int y) {
         allowedMoves = chessMen[x, y].possibleMove();
         selectedPiece = chessMen[x, y];
@@ -316,20 +322,35 @@ public class BoardManager : MonoBehaviour {
         BoardHighlights.Instance.hideHighlights();
         isMoveRepeating = false;
     }
+    public GameObject gameoverPanel;
     private void gameOver() {
-        if (isWhiteTurn)
-            Debug.Log("White won");
-        else
-            Debug.Log("Black Won");
-
-        restartGame();
+        gameoverPanel.SetActive(true);
+        panelState(true);
+        TextMeshProUGUI textBox = gameoverPanel.GetComponentInChildren<TextMeshProUGUI>();
+        if (isWhiteTurn == playerIsWhite) {
+            textBox.text = "You won! Noice!!";
+        } else {
+            string _text = "";
+            foreach (gameClient gc in client.players) {
+                if (gc.isHost != playerIsWhite) {
+                    _text = gc.name + " Won! \n Shame On You!!";
+                    break;
+                }
+            }
+            textBox.text = _text;
+        }
     }
     private void restartGame() {
-        foreach (GameObject go in activeChessmen)
-            Destroy(go);
-        isWhiteTurn = true;
-        BoardHighlights.Instance.hideHighlights();
-        spawnAllChessmen();
+        if (restartGameRequests >= 2) {
+            foreach (GameObject go in activeChessmen)
+                Destroy(go);
+            isWhiteTurn = true;
+            BoardHighlights.Instance.hideHighlights();
+            spawnAllChessmen();
+            restartGameRequests = 0;
+            gameoverPanel.SetActive(false);
+            panelState(false);
+        }
     }
     private Vector3 getTileCenter(int x, int y) {
         Vector3 origin = Vector3.zero;

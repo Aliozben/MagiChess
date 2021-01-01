@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class Command : MonoBehaviour {
     BoardManager BM;
     Client client;
-
     public GameObject game;
     public RectTransform game1;
     public static float bubblePos = 50f;
@@ -15,6 +14,10 @@ public class Command : MonoBehaviour {
         BM = BoardManager.Instance;
 
         client = FindObjectOfType<Client>();
+    }
+    public void restartGame(){
+        string msg = "CRST|";
+        client.send(msg);
     }
     public void sendChatBubble() {
         string text = GameObject.Find("BubbleText").transform.GetChild(2).GetComponent<Text>().text;

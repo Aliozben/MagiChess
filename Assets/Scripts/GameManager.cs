@@ -70,7 +70,6 @@ public class GameManager : MonoBehaviour {
         SceneManager.LoadScene("Game");
     }
     public void leaveCurrentGame() {
-        SceneManager.LoadScene("Menu");
         cancelConnection();
     }
     private void cancelConnection() {
@@ -82,5 +81,8 @@ public class GameManager : MonoBehaviour {
         Client c = FindObjectOfType<Client>();
         if (c != null)
             Destroy(c.gameObject);
+    }
+    public void quit(){
+        Application.Quit();
     }
 }

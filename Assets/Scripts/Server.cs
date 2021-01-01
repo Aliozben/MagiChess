@@ -78,6 +78,9 @@ public class Server : MonoBehaviour {
                 c.isHost = (aData[2] == "0") ? false : true;
                 broadcast("SCNN|" + c.clientName, clients);
                 break;
+            case "CDCNN":
+                broadcast("SDCNN", clients);
+                break;
             case "CMOV":
                 broadcast("SMOV|" + aData[1] + "|" + aData[2] + "|" + aData[3] + "|" + aData[4], clients);
                 break;
@@ -90,7 +93,13 @@ public class Server : MonoBehaviour {
             case "CCHAT":
                 broadcast("SCHAT|" + aData[1] + "|" + aData[2], clients);
                 break;
+            case "CRST":
+                broadcast("SRST",clients);
+                break;
         }
+    }
+    private void OnDisable() {
+        broadcast("SDCNN", clients);
     }
     private void startListening() {
         server.BeginAcceptTcpClient(acceptTcpClient, server);

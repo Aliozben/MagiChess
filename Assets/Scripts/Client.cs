@@ -12,11 +12,9 @@ public class Client : MonoBehaviour {
     private NetworkStream stream;
     private StreamWriter writer;
     private StreamReader reader;
-    private List<gameClient> players = new List<gameClient>();
-    //GameManager GM;
+    public List<gameClient> players = new List<gameClient>();
     private void Start() {
         DontDestroyOnLoad(gameObject);
-        //GM = FindObjectOfType<GameManager>();
     }
     public bool connectToServer(string host, int port) {
         if (socketReady)
@@ -68,6 +66,10 @@ public class Client : MonoBehaviour {
             case "SCNN": //Connect
                 userConnected(aData[1], false);
                 break;
+            case "SDCNN": //Someone Disconnected.
+                BoardManager.Instance.disconnectedPanel.SetActive(true);
+                BoardManager.Instance.panelState(true);
+                break;
             case "SMOV": //Move Piece
                 BoardManager.Instance.moveChessPiece(int.Parse(aData[1]), int.Parse(aData[2]), int.Parse(aData[3]), int.Parse(aData[4]));
                 break;
@@ -79,6 +81,9 @@ public class Client : MonoBehaviour {
                 break;
             case "SCHAT": //Chat Bubble                
                 ChatBubble.createChatBubble(BoardManager.Instance.chatPanel, GameManager.Instance.chatBubble, bool.Parse(aData[1]), aData[2]);
+                break;
+            case "SRST":
+                BoardManager.Instance.restartGameRequests += 1;
                 break;
         }
     }
@@ -98,6 +103,7 @@ public class Client : MonoBehaviour {
     private void closeSocket() {
         if (!socketReady)
             return;
+        send("CDCNN");
         writer.Close();
         reader.Close();
         socket.Close();

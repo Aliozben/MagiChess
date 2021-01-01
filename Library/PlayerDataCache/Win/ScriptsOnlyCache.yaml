@@ -18,6 +18,7 @@ ScriptsOnlyBuild:
     - Queen
     - Rook
     - Server
+    - SoundManager
     - SpellCards
     - SpellManager
     Unity.Rider.Editor.dll:
@@ -42,6 +43,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.Image
     - UnityEngine.UI.InputField
     - UnityEngine.UI.Outline
+    - UnityEngine.UI.Slider
     - UnityEngine.UI.Text
   sceneClasses:
     Assets/Scenes/Game.unity:
@@ -71,6 +73,10 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 81
       Script: {instanceID: 0}
+    - Class: 82
+      Script: {instanceID: 0}
+    - Class: 83
+      Script: {instanceID: 0}
     - Class: 104
       Script: {instanceID: 0}
     - Class: 108
@@ -78,7 +84,7 @@ ScriptsOnlyBuild:
     - Class: 111
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11182}
+      Script: {instanceID: 11184}
     - Class: 114
       Script: {instanceID: 11350}
     - Class: 114
@@ -108,37 +114,41 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 12032}
     - Class: 114
-      Script: {instanceID: 12128}
+      Script: {instanceID: 12126}
     - Class: 114
-      Script: {instanceID: 12200}
+      Script: {instanceID: 12198}
     - Class: 114
-      Script: {instanceID: 12236}
+      Script: {instanceID: 12234}
     - Class: 114
-      Script: {instanceID: 12394}
+      Script: {instanceID: 12390}
     - Class: 114
-      Script: {instanceID: 12396}
+      Script: {instanceID: 12392}
     - Class: 114
-      Script: {instanceID: 12430}
+      Script: {instanceID: 12426}
     - Class: 114
-      Script: {instanceID: 12568}
+      Script: {instanceID: 12564}
     - Class: 114
-      Script: {instanceID: 12614}
+      Script: {instanceID: 12610}
     - Class: 114
-      Script: {instanceID: 12640}
+      Script: {instanceID: 12636}
     - Class: 114
-      Script: {instanceID: 12704}
+      Script: {instanceID: 12700}
     - Class: 114
-      Script: {instanceID: 12720}
+      Script: {instanceID: 12716}
     - Class: 114
-      Script: {instanceID: 12878}
+      Script: {instanceID: 12772}
     - Class: 114
-      Script: {instanceID: 12962}
+      Script: {instanceID: 12876}
     - Class: 114
-      Script: {instanceID: 13006}
+      Script: {instanceID: 12960}
     - Class: 114
-      Script: {instanceID: 13066}
+      Script: {instanceID: 13004}
     - Class: 114
-      Script: {instanceID: 13084}
+      Script: {instanceID: 13064}
+    - Class: 114
+      Script: {instanceID: 13082}
+    - Class: 114
+      Script: {instanceID: 13096}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 124
@@ -197,7 +207,7 @@ ScriptsOnlyBuild:
     - Class: 111
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 11182}
+      Script: {instanceID: 11184}
     - Class: 114
       Script: {instanceID: 11350}
     - Class: 114
@@ -211,27 +221,27 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11828}
     - Class: 114
-      Script: {instanceID: 12200}
+      Script: {instanceID: 12198}
     - Class: 114
-      Script: {instanceID: 12236}
+      Script: {instanceID: 12234}
     - Class: 114
-      Script: {instanceID: 12394}
+      Script: {instanceID: 12390}
     - Class: 114
-      Script: {instanceID: 12396}
+      Script: {instanceID: 12392}
     - Class: 114
-      Script: {instanceID: 12430}
+      Script: {instanceID: 12426}
     - Class: 114
-      Script: {instanceID: 12444}
+      Script: {instanceID: 12440}
     - Class: 114
-      Script: {instanceID: 12640}
+      Script: {instanceID: 12636}
     - Class: 114
-      Script: {instanceID: 12704}
+      Script: {instanceID: 12700}
     - Class: 114
-      Script: {instanceID: 12862}
+      Script: {instanceID: 12860}
     - Class: 114
-      Script: {instanceID: 13006}
+      Script: {instanceID: 13004}
     - Class: 114
-      Script: {instanceID: 13066}
+      Script: {instanceID: 13064}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -377,7 +387,7 @@ ScriptsOnlyBuild:
     className: SignalAsset
   - hash:
       serializedVersion: 2
-      Hash: 0e61fbb92808ad5ee31ccb7732f57ca2
+      Hash: 53ced1c6f02c4541776a91f9d1d0b03e
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
     className: BoardManager
@@ -671,6 +681,12 @@ ScriptsOnlyBuild:
     className: BeforeAfterTestCommandState
   - hash:
       serializedVersion: 2
+      Hash: 89be229a5f93cdfddf3fb95d7a3f9270
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: SoundManager
+  - hash:
+      serializedVersion: 2
       Hash: c3d3430df9e3ea95e3e3d587961390fb
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
@@ -789,30 +805,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: ShowFps
-  - hash:
-      serializedVersion: 2
-      Hash: a45ee4430ae5fdf24ac627cd20ebe99b
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: ParticlesPlayback
-  - hash:
-      serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: Gui_menu
-  - hash:
-      serializedVersion: 2
-      Hash: 03d5c89949329040945487694278bf7a
-    assemblyName: Assembly-CSharp.dll
-    namespaceName: 
-    className: rotate
   platform: 5
   scenePathNames:
   - Assets/Scenes/Menu.unity
