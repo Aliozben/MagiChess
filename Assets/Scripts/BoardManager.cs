@@ -81,6 +81,9 @@ public class BoardManager : MonoBehaviour {
                 case "Stun":
                     allowedMoves = spells.possibleStun();
                     break;
+                case "Cover":
+                    allowedMoves = spells.possibleCover();
+                    break;
             }
             BoardHighlights.Instance.highlightAllowedMoves(allowedMoves);
         }
@@ -110,10 +113,14 @@ public class BoardManager : MonoBehaviour {
             chessMen[x, y].enabled = false;
             spawnSpellMan(spellName, x, y);
             sp.endSpellTurn = turnCount + 3;
+        } else if (spellName == "Cover") {
+            spawnSpellMan(spellName, x, y);
+            sp.endSpellTurn = turnCount + 6;
         }
         sp.x = x;
         sp.y = y;
-        spelledPieces.Add(sp);
+        if (spellName != "Cover")
+            spelledPieces.Add(sp);
         BoardHighlights.Instance.hideHighlights();
         isSpellMove = false;
     }
@@ -436,13 +443,18 @@ public class BoardManager : MonoBehaviour {
             activeChessmen.Add(go);
         } else if (spellName == "Stun") {
             GameObject go = Instantiate(spelledPrefabs[2], getTileCenter(x, y), Quaternion.identity) as GameObject;
-            //go.name = chessMen[x, y].GetType().ToString();
             tempSpellObjects[x, y] = go;
             chessMen[x, y].gameObject.GetComponent<ChessPieces>().enabled = false;
             chessMen[x, y] = chessMen[x, y].gameObject.AddComponent<Cooldown>();
-            //chessMen[x, y] = go2.GetComponent<ChessPieces>();
             chessMen[x, y].setPosition(x, y);
             chessMen[x, y].isItWhite = !isWhiteTurn;
+        } else if (spellName == "Cover") {
+            GameObject go = Instantiate(spelledPrefabs[4], getTileCenter(x, y), Quaternion.identity) as GameObject;
+            go.transform.SetParent(transform);
+            chessMen[x, y] = go.GetComponent<Cooldown>();
+            chessMen[x, y].isItWhite = !playerIsWhite;
+            chessMen[x, y].setPosition(x, y);
+            activeChessmen.Add(go);
         }
         pieceID++;
     }

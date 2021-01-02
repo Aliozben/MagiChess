@@ -23,6 +23,9 @@ public class SpellManager : MonoBehaviour {
         BM = BoardManager.Instance;
     }
     void Update() {
+        updateSpellsCooldowns();
+    }
+    private void updateSpellsCooldowns() {
         foreach (SpellCooldowns scd in spellCDs.Values) {
             if (scd.inCooldown) {
                 scd.timer -= Time.deltaTime;
@@ -51,6 +54,10 @@ public class SpellManager : MonoBehaviour {
             case "Upgrade":
                 scd.cooldownTime = 160f;
                 scd.resetTurn = BM.turnCount + 8;
+                break;
+            case "Cover":
+                scd.cooldownTime = 240f;
+                scd.resetTurn = BM.turnCount + 10;
                 break;
             default:
                 scd.cooldownTime = 3f;
