@@ -23,7 +23,7 @@ public class SpellCards : MonoBehaviour {
         bool[,] r = new bool[8, 8];
         ChessPieces c;
         for (int i = 0; i < 8; i++) {
-            for (int j = 8; j < 8; j++) {
+            for (int j = 0; j < 8; j++) {
                 c = BoardManager.Instance.chessMen[i, j];
                 if (c == null)
                     r[i, j] = true;

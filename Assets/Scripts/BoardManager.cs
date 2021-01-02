@@ -449,7 +449,7 @@ public class BoardManager : MonoBehaviour {
             chessMen[x, y].setPosition(x, y);
             chessMen[x, y].isItWhite = !isWhiteTurn;
         } else if (spellName == "Cover") {
-            GameObject go = Instantiate(spelledPrefabs[4], getTileCenter(x, y), Quaternion.identity) as GameObject;
+            GameObject go = Instantiate(spelledPrefabs[3], getTileCenter(x, y), Quaternion.identity) as GameObject;
             go.transform.SetParent(transform);
             chessMen[x, y] = go.GetComponent<Cooldown>();
             chessMen[x, y].isItWhite = !playerIsWhite;
