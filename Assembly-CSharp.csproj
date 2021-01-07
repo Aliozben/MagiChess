@@ -57,6 +57,9 @@
      <Compile Include="Assets\Scripts\SoundManager.cs" />
      <Compile Include="Assets\Scripts\SpellCards.cs" />
      <Compile Include="Assets\Scripts\SpellManager.cs" />
+     <Compile Include="Assets\Scripts\Tooltip.cs" />
+     <Compile Include="Assets\Scripts\TooltipSystem.cs" />
+     <Compile Include="Assets\Scripts\TooltipTrigger.cs" />
      <Compile Include="Assets\Scripts\shakeScript.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Overlay.shader" />
@@ -261,9 +264,6 @@
     </Reference>
     <Reference Include="UnityEditor">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.4f1/Editor/Data/Managed/UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="Editor">
-        <HintPath>C:/Users/Abi/Documents/Projects/3Dchess/Assets/Plugins/Octane/Editor.dll</HintPath>
     </Reference>
     <Reference Include="netstandard">
         <HintPath>C:/Program Files/Unity/Hub/Editor/2019.3.4f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
