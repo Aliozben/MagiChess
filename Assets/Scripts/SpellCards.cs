@@ -12,7 +12,7 @@ public class SpellCards : MonoBehaviour {
             for (int j = 0; j < 8; j++) {
                 c = BoardManager.Instance.chessMen[i, j];
                 if (c != null && c.isItWhite == BoardManager.Instance.playerIsWhite) {
-                    if (c.GetType() != typeof(Queen) && c.GetType() != typeof(King))
+                    if (c.GetType() != typeof(Cooldown) && c.GetType() != typeof(King))
                         r[i, j] = true;
                 }
             }
@@ -39,7 +39,7 @@ public class SpellCards : MonoBehaviour {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 c = BoardManager.Instance.chessMen[i, j];
-                if (c != null && c.isItWhite != BoardManager.Instance.playerIsWhite) {
+                if (c != null && c.isItWhite != BoardManager.Instance.playerIsWhite && c.GetType() != typeof(Cooldown)) {
                     r[i, j] = true;
                 }
             }

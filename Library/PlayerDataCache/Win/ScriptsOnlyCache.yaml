@@ -21,6 +21,9 @@ ScriptsOnlyBuild:
     - SoundManager
     - SpellCards
     - SpellManager
+    - Tooltip
+    - TooltipSystem
+    - TooltipTrigger
     Unity.Rider.Editor.dll:
     - Packages.Rider.Editor.UnitTesting.CallbackData
     Unity.TextMeshPro.dll:
@@ -39,12 +42,15 @@ ScriptsOnlyBuild:
     - UnityEngine.EventSystems.StandaloneInputModule
     - UnityEngine.UI.Button
     - UnityEngine.UI.CanvasScaler
+    - UnityEngine.UI.ContentSizeFitter
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
     - UnityEngine.UI.InputField
+    - UnityEngine.UI.LayoutElement
     - UnityEngine.UI.Outline
     - UnityEngine.UI.Slider
     - UnityEngine.UI.Text
+    - UnityEngine.UI.VerticalLayoutGroup
   sceneClasses:
     Assets/Scenes/Game.unity:
     - Class: 1
@@ -92,63 +98,75 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11436}
     - Class: 114
-      Script: {instanceID: 11480}
+      Script: {instanceID: 11462}
     - Class: 114
-      Script: {instanceID: 11486}
+      Script: {instanceID: 11482}
     - Class: 114
-      Script: {instanceID: 11512}
+      Script: {instanceID: 11488}
+    - Class: 114
+      Script: {instanceID: 11496}
+    - Class: 114
+      Script: {instanceID: 11514}
     - Class: 114
       Script: {instanceID: 11516}
     - Class: 114
-      Script: {instanceID: 11612}
+      Script: {instanceID: 11518}
     - Class: 114
-      Script: {instanceID: 11666}
+      Script: {instanceID: 11614}
     - Class: 114
-      Script: {instanceID: 11682}
+      Script: {instanceID: 11668}
     - Class: 114
-      Script: {instanceID: 11798}
+      Script: {instanceID: 11684}
     - Class: 114
-      Script: {instanceID: 11802}
+      Script: {instanceID: 11800}
     - Class: 114
-      Script: {instanceID: 11948}
+      Script: {instanceID: 11804}
     - Class: 114
-      Script: {instanceID: 12032}
+      Script: {instanceID: 11950}
     - Class: 114
-      Script: {instanceID: 12126}
+      Script: {instanceID: 12034}
     - Class: 114
-      Script: {instanceID: 12198}
+      Script: {instanceID: 12128}
     - Class: 114
-      Script: {instanceID: 12234}
+      Script: {instanceID: 12200}
     - Class: 114
-      Script: {instanceID: 12390}
+      Script: {instanceID: 12236}
+    - Class: 114
+      Script: {instanceID: 12294}
     - Class: 114
       Script: {instanceID: 12392}
     - Class: 114
-      Script: {instanceID: 12426}
+      Script: {instanceID: 12394}
     - Class: 114
-      Script: {instanceID: 12564}
+      Script: {instanceID: 12428}
     - Class: 114
-      Script: {instanceID: 12610}
+      Script: {instanceID: 12566}
     - Class: 114
-      Script: {instanceID: 12636}
+      Script: {instanceID: 12612}
     - Class: 114
-      Script: {instanceID: 12700}
+      Script: {instanceID: 12638}
     - Class: 114
-      Script: {instanceID: 12716}
+      Script: {instanceID: 12702}
     - Class: 114
-      Script: {instanceID: 12772}
+      Script: {instanceID: 12718}
     - Class: 114
-      Script: {instanceID: 12876}
+      Script: {instanceID: 12774}
     - Class: 114
-      Script: {instanceID: 12960}
+      Script: {instanceID: 12878}
     - Class: 114
-      Script: {instanceID: 13004}
+      Script: {instanceID: 12962}
     - Class: 114
-      Script: {instanceID: 13064}
+      Script: {instanceID: 13006}
     - Class: 114
-      Script: {instanceID: 13082}
+      Script: {instanceID: 13066}
     - Class: 114
-      Script: {instanceID: 13096}
+      Script: {instanceID: 13084}
+    - Class: 114
+      Script: {instanceID: 13098}
+    - Class: 114
+      Script: {instanceID: 18672}
+    - Class: 114
+      Script: {instanceID: 18680}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 124
@@ -213,35 +231,35 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 11390}
     - Class: 114
-      Script: {instanceID: 11516}
+      Script: {instanceID: 11518}
     - Class: 114
-      Script: {instanceID: 11682}
+      Script: {instanceID: 11684}
     - Class: 114
-      Script: {instanceID: 11802}
+      Script: {instanceID: 11804}
     - Class: 114
-      Script: {instanceID: 11828}
+      Script: {instanceID: 11830}
     - Class: 114
-      Script: {instanceID: 12198}
+      Script: {instanceID: 12200}
     - Class: 114
-      Script: {instanceID: 12234}
-    - Class: 114
-      Script: {instanceID: 12390}
+      Script: {instanceID: 12236}
     - Class: 114
       Script: {instanceID: 12392}
     - Class: 114
-      Script: {instanceID: 12426}
+      Script: {instanceID: 12394}
     - Class: 114
-      Script: {instanceID: 12440}
+      Script: {instanceID: 12428}
     - Class: 114
-      Script: {instanceID: 12636}
+      Script: {instanceID: 12442}
     - Class: 114
-      Script: {instanceID: 12700}
+      Script: {instanceID: 12638}
     - Class: 114
-      Script: {instanceID: 12860}
+      Script: {instanceID: 12702}
     - Class: 114
-      Script: {instanceID: 13004}
+      Script: {instanceID: 12862}
     - Class: 114
-      Script: {instanceID: 13064}
+      Script: {instanceID: 13006}
+    - Class: 114
+      Script: {instanceID: 13066}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -361,6 +379,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI.dll
     namespaceName: UnityEngine.UI
     className: GridLayoutGroup
+  - hash:
+      serializedVersion: 2
+      Hash: 960ed242cb15808d04664c678f6bf6d0
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: Tooltip
   - hash:
       serializedVersion: 2
       Hash: f4dd10a22c7b76ccc439833b2964c825
@@ -805,6 +829,18 @@ ScriptsOnlyBuild:
     assemblyName: Unity.Timeline.dll
     namespaceName: UnityEngine.Timeline
     className: PlayableTrack
+  - hash:
+      serializedVersion: 2
+      Hash: 8be28f86b55884b5c0d5d63eb527f7a7
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TooltipSystem
+  - hash:
+      serializedVersion: 2
+      Hash: 595c58e07fe02d2ab477f103548c9a72
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: TooltipTrigger
   platform: 5
   scenePathNames:
   - Assets/Scenes/Menu.unity

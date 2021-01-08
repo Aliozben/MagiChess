@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -69,6 +69,10 @@ public class BoardManager : MonoBehaviour {
     }
     public void spellHighlight(string spellName) {
         BoardHighlights.Instance.hideHighlights();
+        if (selectedPiece) {
+            selectedPiece.GetComponent<Outline>().enabled = false;
+            selectedPiece = null;
+        }
         if (isSpellMove) {
             isSpellMove = false;
         } else {
@@ -108,19 +112,16 @@ public class BoardManager : MonoBehaviour {
             sp.endSpellTurn = turnCount + 4;
             activeChessmen.Remove(selectedPiece.gameObject);
             Destroy(selectedPiece.gameObject);
-            spawnSpellMan(spellName, x, y);
         } else if (spellName == "Stun") {
             chessMen[x, y].enabled = false;
-            spawnSpellMan(spellName, x, y);
             sp.endSpellTurn = turnCount + 3;
         } else if (spellName == "Cover") {
-            spawnSpellMan(spellName, x, y);
             sp.endSpellTurn = turnCount + 6;
         }
+        spawnSpellMan(spellName, x, y);
         sp.x = x;
         sp.y = y;
-        if (spellName != "Cover")
-            spelledPieces.Add(sp);
+        spelledPieces.Add(sp);
         BoardHighlights.Instance.hideHighlights();
         isSpellMove = false;
     }
@@ -152,6 +153,8 @@ public class BoardManager : MonoBehaviour {
                     chessMen[sp.x, sp.y] = chessMen[sp.x, sp.y].gameObject.GetComponent<ChessPieces>();
                     tempSpellObjects[sp.x, sp.y] = null;
                 }
+            } else if (sp.spellName == "Cover") {
+                chessMen[sp.x, sp.y].isItWhite = !isWhiteTurn;
             }
         }
     }
@@ -205,6 +208,7 @@ public class BoardManager : MonoBehaviour {
                     newPosTimer = .6f;
                     selectedPiece.transform.position = getTileCenter((int)newPos.x, (int)newPos.z);
                     spawnAnim.transform.position = selectedPiece.transform.position;
+                    panelState(false);
                     spawnAnim.Play();
                     soundManager.moveSpawn.Play();
                     selectedPiece = null;
@@ -225,6 +229,7 @@ public class BoardManager : MonoBehaviour {
         newPos = new Vector3(x, 15f, y);
         stillPieceMoving = true;
         auraAnim.transform.position = selectedPiece.transform.position;
+        panelState(true);
         auraAnim.Play();
         soundManager.moveLoading.Play();
         originPosition = selectedPiece.transform.position;
@@ -452,29 +457,11 @@ public class BoardManager : MonoBehaviour {
             GameObject go = Instantiate(spelledPrefabs[3], getTileCenter(x, y), Quaternion.identity) as GameObject;
             go.transform.SetParent(transform);
             chessMen[x, y] = go.GetComponent<Cooldown>();
-            chessMen[x, y].isItWhite = !playerIsWhite;
+            chessMen[x, y].isItWhite = !isWhiteTurn;
             chessMen[x, y].setPosition(x, y);
             activeChessmen.Add(go);
         }
         pieceID++;
-    }
-    private void DrawChessboard() {
-        Vector3 widthLine = Vector3.right * 8;
-        Vector3 heigthLine = Vector3.forward * 8;
-
-        for (int i = 0; i <= 8; i++) {
-            Vector3 start = Vector3.forward * i;
-            Debug.DrawLine(start, start + widthLine);
-            for (int j = 0; j <= 8; j++) {
-                start = Vector3.right * j;
-                Debug.DrawLine(start, start + heigthLine);
-            }
-        }
-        if (selectionX >= 0 && selectionY >= 0) {
-            Debug.DrawLine(Vector3.forward * selectionY + Vector3.right * selectionX,
-                Vector3.forward * (selectionY + 1) + Vector3.right * (selectionX + 1));
-
-        }
     }
     private void swapTurn() {
         turnCount++;
