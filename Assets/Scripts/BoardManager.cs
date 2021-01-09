@@ -154,7 +154,7 @@ public class BoardManager : MonoBehaviour {
                     tempSpellObjects[sp.x, sp.y] = null;
                 }
             } else if (sp.spellName == "Cover") {
-                chessMen[sp.x, sp.y].isItWhite = !isWhiteTurn;
+                chessMen[sp.x, sp.y].isItWhite = isWhiteTurn;
             }
         }
     }
